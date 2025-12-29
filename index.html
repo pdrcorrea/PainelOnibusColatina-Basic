@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PontoView • Painel de Ônibus</title>
+  <title>Next Bus • Estação Central (Básico)</title>
 
   <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
@@ -14,11 +14,9 @@
 
   <style>
     :root{
-      /* Fundo */
       --bg0:#081423;
       --bg1:#0a2232;
 
-      /* Card */
       --panel:#ffffff;
       --panel2:#f5f7fb;
 
@@ -30,31 +28,21 @@
 
       --shadow: 0 18px 60px rgba(2,10,23,.18);
 
+      --vjd:#0f3f82; /* azul escuro */
+      --vsr:#5fc2ff; /* azul claro */
+
+      --ok:#1fa765;
+      --okSoft: rgba(31, 167, 101, .12);
+
       --r: 18px;
-      --pad: clamp(14px, 2.2vw, 26px);
+      --pad: clamp(14px, 2.0vw, 22px);
+
+      /* Paginação */
+      --bar: #1c5aa6;
+      --bar2: #34c6d0;
 
       /* Cabeçalho integrado */
       --header: linear-gradient(90deg, #0b2c5a, #1976b7);
-
-      /* Cores empresas */
-      --vjd: #0b2c5a; /* azul escuro */
-      --vsr: #1ea7ff; /* azul claro */
-
-      /* Destaque próximo ônibus */
-      --okBg: #1fb86a;
-      --okText: #ffffff;
-
-      /* Escalas (TV-friendly) */
-      --title: clamp(22px, 2.2vh, 42px);
-      --sub: clamp(12px, 1.2vh, 18px);
-      --clock: clamp(34px, 3.8vh, 70px);
-      --small: clamp(11px, 1.1vh, 15px);
-
-      --lineNum: clamp(34px, 4.2vh, 62px);
-      --dest: clamp(18px, 2.3vh, 30px);
-
-      --pill: clamp(11px, 1.15vh, 14px);
-      --meta: clamp(11px, 1.1vh, 14px);
     }
 
     *{ box-sizing:border-box; }
@@ -64,16 +52,18 @@
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color: var(--text);
       overflow:hidden;
+
       background:
         radial-gradient(1200px 900px at 25% 10%, rgba(87,184,231,.22) 0%, rgba(10,46,62,0) 60%),
         radial-gradient(900px 700px at 75% 80%, rgba(52,198,208,.14) 0%, rgba(6,18,24,0) 65%),
         radial-gradient(1400px 1100px at 50% 55%, var(--bg1) 0%, var(--bg0) 62%, #040a0f 100%);
+
       padding: clamp(12px, 2vw, 22px);
       display:grid;
       place-items:center;
     }
 
-    /* Card principal (cabeçalho + conteúdo) */
+    /* CARD PRINCIPAL (cabeçalho + conteúdo) */
     .panel{
       width: min(1500px, 96vw);
       height: calc(100vh - clamp(24px, 4vw, 44px));
@@ -85,71 +75,60 @@
       flex-direction:column;
 
       opacity:0;
-      transform: translateY(10px);
-      animation: in 800ms cubic-bezier(.22,1,.36,1) forwards;
+      transform: translateY(12px);
+      animation: inPanel 900ms cubic-bezier(.22,1,.36,1) forwards;
       position:relative;
     }
-    @keyframes in{ to{ opacity:1; transform:none; } }
+    @keyframes inPanel{ to{ opacity:1; transform: translateY(0);} }
 
-    /* Cabeçalho integrado */
+    /* Cabeçalho integrado (faixa azul) */
     .header{
+      padding: 18px var(--pad);
       background: var(--header);
       color:#fff;
-      padding: 18px var(--pad);
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap: 16px;
     }
+
     .h-left{
       display:flex;
       align-items:center;
       gap: 16px;
-      min-width:0;
+      min-width: 0;
     }
-    .iconBox{
-      width: clamp(44px, 5vh, 60px);
-      height: clamp(44px, 5vh, 60px);
-      border-radius: 16px;
-      display:grid;
-      place-items:center;
+    .busIcon{
+      width: 46px; height: 46px;
+      border-radius: 14px;
+      display:grid; place-items:center;
       background: rgba(255,255,255,.14);
       box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
-      flex:0 0 auto;
+      flex: 0 0 auto;
     }
-    .iconBox .material-icons-outlined{
-      font-size: clamp(22px, 2.6vh, 30px);
-    }
+    .busIcon .material-icons-outlined{ font-size: 26px; }
+
     .titleBlock{ min-width:0; }
     .title{
-      font-size: var(--title);
+      font-size: clamp(22px, 2.6vw, 34px);
       font-weight: 900;
       letter-spacing: .08em;
       text-transform: uppercase;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      line-height: 1.1;
     }
     .sub{
       margin-top: 6px;
-      font-size: var(--sub);
-      font-weight: 800;
+      font-size: 13px;
+      font-weight: 700;
       letter-spacing: .12em;
       text-transform: uppercase;
-      opacity: .9;
+      opacity: .90;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
       max-width: 70vw;
-      line-height: 1.2;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .sub .material-icons-outlined{
-      font-size: clamp(16px, 1.8vh, 22px);
-      opacity:.95;
     }
 
     .h-right{
@@ -161,21 +140,21 @@
       align-items:flex-end;
     }
     .clock{
-      font-size: var(--clock);
+      font-size: clamp(40px, 4.4vw, 58px);
       font-weight: 900;
       letter-spacing: .06em;
       line-height: 1;
     }
     .lastUpdate{
-      font-size: var(--small);
-      font-weight: 900;
+      font-size: 12px;
+      font-weight: 800;
       letter-spacing: .12em;
       text-transform: uppercase;
-      opacity: .9;
+      opacity: .90;
     }
 
-    /* Faixa superior do conteúdo */
-    .topline{
+    /* Faixa topo do conteúdo (igual ao clima) */
+    .panelTop{
       padding: 12px var(--pad);
       background: #f3f7ff;
       border-bottom: 1px solid var(--stroke2);
@@ -185,124 +164,164 @@
       gap: 12px;
       flex-wrap:wrap;
     }
-    .topInfo{
-      font-size: var(--small);
+    .panelInfo{
+      font-size: 12px;
       font-weight: 900;
       letter-spacing: .12em;
       text-transform: uppercase;
       color: #1f2a44;
     }
 
-    /* Área lista (com paginação) */
-    .body{
-      flex:1;
-      min-height:0;
+    .pager{
       display:flex;
-      flex-direction:column;
-    }
-    .listWrap{
-      flex:1;
-      min-height:0;
-      padding: clamp(14px, 2.2vw, 28px);
-      display:flex;
-      flex-direction:column;
+      align-items:center;
       gap: 12px;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .bar{
+      width: 240px;
+      height: 10px;
+      border-radius: 999px;
+      background: #e7eefb;
+      border: 1px solid #d6e2f4;
       overflow:hidden;
     }
+    .bar > div{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, var(--bar), var(--bar2));
+      border-radius: 999px;
+      transition: width 120ms linear;
+    }
 
-    /* Página (animação) */
+    .warn{
+      display:none;
+      margin: 12px var(--pad) 0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #fff7ed;
+      border: 1px dashed #fdba74;
+      color: #7c2d12;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+    }
+
+    /* Área de conteúdo (lista/paginação) */
+    .stage{
+      position:relative;
+      flex: 1;
+      min-height:0;
+      padding: var(--pad);
+      overflow:hidden;
+      background: var(--panel);
+    }
+
+    /* Animação troca de página */
     .page{
+      position:absolute;
+      inset: var(--pad);
       display:grid;
       gap: 12px;
       align-content:start;
       opacity:0;
-      transform: translateY(10px);
-      animation: pageIn 520ms cubic-bezier(.22,1,.36,1) forwards;
+      transform: translateX(18px);
+      pointer-events:none;
     }
-    @keyframes pageIn{
-      to{ opacity:1; transform:none; }
+    .page.active{
+      opacity:1;
+      transform: translateX(0);
+      pointer-events:auto;
+      transition: opacity 520ms ease, transform 520ms ease;
+    }
+    .page.exit{
+      opacity:0;
+      transform: translateX(-18px);
+      transition: opacity 520ms ease, transform 520ms ease;
     }
 
-    /* Cards de linha */
+    /* Cards (básico, claro, legível) */
     .card{
+      position:relative;
       border-radius: 16px;
-      border: 1px solid var(--stroke2);
-      background: var(--panel2);
-      padding: clamp(12px, 1.8vh, 18px);
+      background: #ffffff;
+      border: 1px solid var(--stroke);
+      box-shadow: 0 10px 26px rgba(2,10,23,.08);
+      overflow:hidden;
+      min-height: 92px;
+
       display:grid;
-      grid-template-columns: 120px 1fr 250px;
+      grid-template-columns: 120px 1fr 260px;
       gap: 14px;
       align-items:center;
-      position:relative;
-      overflow:hidden;
-      min-height: clamp(84px, 9vh, 120px);
+      padding: 14px 16px;
     }
 
-    /* Faixa lateral cor empresa */
-    .card::before{
-      content:"";
+    .stripe{
       position:absolute;
-      left:0; top:0; bottom:0;
-      width: 10px;
+      inset:0 auto 0 0;
+      width: 8px;
       background: var(--vjd);
     }
-    .card.vsr::before{ background: var(--vsr); }
 
-    .leftCol{
-      padding-left: 8px;
+    .lineCol{
       display:flex;
       flex-direction:column;
       gap: 10px;
       align-items:flex-start;
+      padding-left: 10px;
     }
     .lineNum{
-      font-size: var(--lineNum);
+      font-size: 38px;
       font-weight: 900;
       letter-spacing: .02em;
       line-height: 1;
-      color:#0b1220;
+      color: #0b1220;
     }
-
-    /* Badge empresa (abaixo do número) */
     .company{
       display:inline-flex;
       align-items:center;
       gap: 8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(15,23,42,.10);
-      background: #ffffff;
-      font-size: var(--meta);
+      font-size: 12px;
       font-weight: 900;
-      letter-spacing: .14em;
+      letter-spacing: .12em;
       text-transform: uppercase;
       color: #0b1220;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke2);
+      background: #f7faff;
     }
     .dot{
       width: 10px; height: 10px; border-radius: 50%;
       background: var(--vjd);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.6);
     }
-    .vsr .dot{ background: var(--vsr); }
 
-    .midCol{
+    .destCol{
       min-width:0;
       display:flex;
       flex-direction:column;
-      gap: 6px;
+      gap: 8px;
     }
-    .dest{
-      font-size: var(--dest);
+    .destName{
+      font-size: clamp(24px, 2.4vw, 32px);
       font-weight: 900;
       letter-spacing: .02em;
       text-transform: uppercase;
-      color:#0b1220;
+      color: #0b1220;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
-    .metaLine{
-      font-size: var(--meta);
-      font-weight: 900;
+    .meta{
+      font-size: 12px;
+      font-weight: 800;
       letter-spacing: .12em;
       text-transform: uppercase;
       color: var(--dim);
@@ -311,205 +330,177 @@
       text-overflow:ellipsis;
     }
 
-    /* Coluna horários: destaque + pílulas em 1 linha (abaixo) */
-    .rightCol{
-      justify-self:end;
+    .timesCol{
       display:flex;
       flex-direction:column;
       align-items:flex-end;
       gap: 10px;
     }
-    .nextTime{
-      padding: 12px 18px;
-      border-radius: 12px;
-      background: var(--okBg);
-      color: var(--okText);
+    .next{
+      width: 100%;
+      max-width: 240px;
+      text-align:center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: var(--okSoft);
+      border: 2px solid rgba(31, 167, 101, .25);
+    }
+    .next .when{
+      font-size: 36px;
       font-weight: 900;
-      letter-spacing: .08em;
-      font-size: clamp(20px, 2.4vh, 34px);
-      line-height: 1;
-      box-shadow: 0 10px 22px rgba(31,184,106,.25);
+      letter-spacing: .06em;
+      color: var(--ok);
+      line-height: 1.05;
+    }
+    .next .label{
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(31, 167, 101, .88);
     }
 
     .pills{
+      width: 100%;
+      max-width: 240px;
       display:flex;
-      gap: 10px;
-      flex-wrap: nowrap;           /* ✅ uma linha */
-      overflow:hidden;             /* evita quebrar layout */
-      max-width: 100%;
+      justify-content:flex-end;
+      align-items:center;
+
+      /* ✅ garante UMA linha */
+      flex-wrap: nowrap;
+      overflow: hidden;
+      gap: 8px;
     }
+
     .pill{
-      flex: 0 0 auto;
       padding: 8px 10px;
       border-radius: 999px;
-      background:#ffffff;
       border: 1px solid var(--stroke2);
-      font-size: var(--pill);
-      font-weight: 900;
-      letter-spacing: .10em;
-      color:#0b1220;
-      white-space:nowrap;
-    }
-
-    /* Rodapé (paginação + barra de progresso) */
-    .footer{
-      padding: 10px var(--pad) 14px;
-      border-top: 1px solid var(--stroke2);
-      background: #ffffff;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 16px;
-    }
-
-    .pageInfo{
-      font-size: var(--small);
+      background: #f1f5f9;
+      min-width: 78px;
+      text-align:center;
+      font-size: 12px;
       font-weight: 900;
       letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--dim);
-      white-space:nowrap;
+      color: #0b1220;
+      white-space: nowrap;
+      flex: 0 0 auto;
     }
 
-    .progress{
-      flex: 1;
-      height: 10px;
-      border-radius: 999px;
-      background: #eef4ff;
-      border: 1px solid var(--stroke2);
-      overflow:hidden;
-      max-width: 520px;
-    }
-    .bar{
-      height:100%;
-      width:0%;
-      background: linear-gradient(90deg, rgba(30,167,255,.90), rgba(11,44,90,.90));
-      border-radius: 999px;
-    }
-
-    /* Placeholder vazio */
     .empty{
-      flex:1;
-      display:grid;
-      place-items:center;
+      padding: 22px 18px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid var(--stroke2);
       color: var(--dim);
+      font-size: 12px;
       font-weight: 900;
-      letter-spacing: .12em;
+      letter-spacing: .14em;
       text-transform: uppercase;
-      font-size: clamp(12px, 1.2vh, 18px);
+      text-align:center;
     }
 
-    /* Logo discreta no canto (sem badge) */
+    /* Logo discreta no canto da TELA */
     .brand{
-      position:absolute;
-      right: 18px;
+      position: fixed;
       bottom: 14px;
-      z-index: 5;
-      pointer-events:none;
+      right: 16px;
       opacity: .22;
-      filter: drop-shadow(0 2px 0 rgba(15,23,42,.25))
-              drop-shadow(0 10px 16px rgba(0,0,0,.08));
+      pointer-events:none;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.14));
+      z-index: 999;
     }
-    .brand img{
-      height: clamp(16px, 2.2vh, 28px);
-      width:auto;
-      display:block;
-    }
+    .brand img{ height: 22px; width:auto; display:block; }
 
     @media (max-width: 980px){
-      body{ overflow:auto; }
-      .panel{ height:auto; }
-      .card{ grid-template-columns: 120px 1fr; grid-template-rows:auto auto; }
-      .rightCol{ grid-column: 1 / -1; align-items:flex-start; justify-self:start; }
-      .pills{ max-width: 100%; }
-      .progress{ max-width: 360px; }
-      .brand{ position:static; opacity:.32; margin: 0 18px 16px auto; width: fit-content; }
+      body{ overflow:auto; display:block; }
+      .panel{ height:auto; width:auto; margin: 12px; }
+      .stage{ min-height: 60vh; }
+
+      .page{ position:relative; inset:auto; padding:0; opacity:1; transform:none; pointer-events:auto; }
+      .card{ grid-template-columns: 110px 1fr; grid-template-rows:auto auto; }
+      .timesCol{ grid-column: 1 / -1; align-items:flex-start; }
+      .next,.pills{ max-width:none; }
+      .bar{ width: 160px; }
+
+      .brand{ position: static; opacity:.35; padding: 0 16px 16px; }
     }
   </style>
 </head>
 
 <body>
-  <section class="panel" aria-label="Painel de ônibus">
-    <!-- Cabeçalho integrado -->
+  <section class="panel" aria-label="Painel de horários">
+    <!-- ✅ Cabeçalho integrado -->
     <div class="header">
       <div class="h-left">
-        <div class="iconBox" aria-hidden="true">
+        <div class="busIcon" aria-hidden="true">
           <span class="material-icons-outlined">directions_bus</span>
         </div>
         <div class="titleBlock">
-          <div class="title">Painel de Ônibus</div>
-          <div class="sub" id="stationLine">
-            <span class="material-icons-outlined" aria-hidden="true">location_on</span>
-            <span id="stationName">Estação Central</span>
-          </div>
+          <div class="title">Estação Central</div>
+          <div class="sub" id="subStatus">Carregando…</div>
         </div>
       </div>
 
       <div class="h-right">
         <div class="clock" id="clock">--:--</div>
-        <div class="lastUpdate" id="statusLine">Carregando…</div>
+        <div class="lastUpdate" id="lastUpdate">Última atualização • —</div>
       </div>
     </div>
 
-    <!-- Faixa topo do conteúdo -->
-    <div class="topline">
-      <div class="topInfo" id="rangeInfo">Próximas saídas • janela 2h</div>
-      <div class="topInfo" id="sourceInfo">Fonte • Google Maps Transit</div>
-    </div>
-
-    <div class="body">
-      <div class="listWrap" id="listWrap">
-        <div class="page" id="page"></div>
-      </div>
-
-      <div class="footer">
-        <div class="pageInfo" id="pageInfo">Página —/—</div>
-        <div class="progress" aria-label="Tempo para troca de página">
-          <div class="bar" id="bar"></div>
-        </div>
-        <div class="pageInfo" id="updatedInfo">Atualizado • —</div>
+    <!-- Top strip (páginas + barra) -->
+    <div class="panelTop">
+      <div class="panelInfo">Próximas saídas (2h) • Next Bus</div>
+      <div class="pager">
+        <span id="pageLabel">PÁGINA 1/1</span>
+        <div class="bar" aria-hidden="true"><div id="barFill"></div></div>
       </div>
     </div>
 
-    <div class="brand" aria-hidden="true">
-      <img src="assets/logo.png" alt="">
-    </div>
+    <div class="warn" id="warn"></div>
+    <div class="stage" id="stage"></div>
   </section>
+
+  <!-- ✅ Logo discreta no canto da tela -->
+  <div class="brand" aria-hidden="true">
+    <img src="assets/logo.png" alt="">
+  </div>
+
+  <!-- opcional: config.js  (window.PONTOVIEW_GMAPS_KEY = "SUA_CHAVE"; ) -->
+  <script src="config.js"></script>
 
   <script>
     /*******************************************************************
-     * 🔑 COLE SUA GOOGLE MAPS API KEY AQUI
+     * 🔑 CHAVE GOOGLE MAPS
      *******************************************************************/
-    const GOOGLE_MAPS_API_KEY = "AIzaSyA5jfERk5m06bl0eQnFLWSYbFhsQFglyO8";
+    const GOOGLE_MAPS_API_KEY = (window.PONTOVIEW_GMAPS_KEY || "").trim() || "COLE_SUA_API_KEY_AQUI";
 
     /*******************************************************************
      * CONFIG
      *******************************************************************/
     const STATION = { lat: -19.5368231, lng: -40.633973 };
-    const STATION_LABEL = "Estação Central";
-
-    const SWEEP_POINTS = 12;            // 360º / 30º
-    const SWEEP_RADIUS_M = 1200;        // ajuste 800–2000m
+    const SWEEP_POINTS = 12;
+    const SWEEP_RADIUS_M = 1200;
     const REFRESH_EVERY_MS = 10 * 60 * 1000;
-
-    const TIME_WINDOW_MIN = 120;        // ✅ somente próximas 2h
+    const TIME_WINDOW_MS = 2 * 60 * 60 * 1000;
 
     // Paginação
-    const PAGE_DURATION_MS = 9000;      // tempo de cada página
-    const PAGE_SWITCH_ANIM_MS = 520;    // deve casar com @keyframes pageIn
+    const PAGE_DURATION_MS = 12000;
+    const PAGE_PROGRESS_TICK_MS = 120;
+    const MIN_ITEMS_PER_PAGE = 4;
 
     /*******************************************************************
      * UI refs
      *******************************************************************/
     const clockEl = document.getElementById("clock");
-    const statusLineEl = document.getElementById("statusLine");
-    const updatedInfoEl = document.getElementById("updatedInfo");
-    const pageInfoEl = document.getElementById("pageInfo");
-    const barEl = document.getElementById("bar");
-    const pageEl = document.getElementById("page");
-    const listWrapEl = document.getElementById("listWrap");
-
-    document.getElementById("stationName").textContent = STATION_LABEL;
+    const lastUpdateEl = document.getElementById("lastUpdate");
+    const subStatusEl = document.getElementById("subStatus");
+    const warnEl = document.getElementById("warn");
+    const stageEl = document.getElementById("stage");
+    const pageLabelEl = document.getElementById("pageLabel");
+    const barFillEl = document.getElementById("barFill");
 
     /*******************************************************************
      * Clock (sem segundos)
@@ -519,8 +510,11 @@
       const d = new Date();
       clockEl.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
     }
-    tickClock();
-    setInterval(tickClock, 1000);
+    function startClock(){
+      tickClock();
+      const ms = 1000 - new Date().getMilliseconds();
+      setTimeout(() => { tickClock(); setInterval(tickClock, 1000); }, ms);
+    }
 
     /*******************************************************************
      * Loader Google Maps
@@ -531,7 +525,8 @@
 
         const key = (GOOGLE_MAPS_API_KEY || "").trim();
         if (!key || key === "COLE_SUA_API_KEY_AQUI"){
-          statusLineEl.textContent = "Insira sua API Key";
+          warnEl.style.display = "block";
+          warnEl.textContent = "INSIRA SUA GOOGLE MAPS API KEY (config.js OU CONSTANTE GOOGLE_MAPS_API_KEY).";
           return reject(new Error("Missing API key"));
         }
 
@@ -546,7 +541,7 @@
     }
 
     /*******************************************************************
-     * Geodesia (destino por bearing)
+     * Geodesia (destinos invisíveis)
      *******************************************************************/
     function toRad(deg){ return deg * Math.PI / 180; }
     function toDeg(rad){ return rad * 180 / Math.PI; }
@@ -580,18 +575,29 @@
     }
 
     /*******************************************************************
-     * Empresa por número de linha
+     * Empresa por número
      *******************************************************************/
     function companyFromLineNumber(lineShort){
       const n = parseInt(String(lineShort).replace(/\D/g,""), 10);
-      if (!Number.isFinite(n)) return { code:"VJD", cls:"vjd", color:"var(--vjd)" };
-      if (n >= 300 && n <= 499) return { code:"VSR", cls:"vsr", color:"var(--vsr)" };
-      return { code:"VJD", cls:"vjd", color:"var(--vjd)" };
+      if (!Number.isFinite(n)) return { code:"VJD", color:"var(--vjd)" };
+      if (n >= 300 && n <= 499) return { code:"VSR", color:"var(--vsr)" };
+      return { code:"VJD", color:"var(--vjd)" };
     }
 
     /*******************************************************************
-     * Parsing Directions (TRANSIT)
+     * Parsing Directions (robusto)
      *******************************************************************/
+    function toMillis(v){
+      if (!v) return null;
+      if (v instanceof Date) return v.getTime();
+      if (typeof v === "number"){
+        if (v > 1e12) return v;       // ms
+        if (v > 1e9)  return v*1000;  // s
+      }
+      if (typeof v === "object" && v.value) return toMillis(v.value);
+      return null;
+    }
+
     function extractTripsFromDirectionsResult(result){
       const trips = [];
       if (!result?.routes?.length) return trips;
@@ -607,9 +613,10 @@
           const lineShort = td.line?.short_name || td.line?.name || "—";
           const headsign = td.headsign || td.line?.name || td.arrival_stop?.name || "Destino";
 
-          const dep = td.departure_time?.value; // epoch seconds
-          const arr = td.arrival_time?.value;   // epoch seconds
-          const timeMs = (arr ? arr*1000 : (dep ? dep*1000 : null));
+          const depMs = toMillis(td.departure_time) || toMillis(td.departure_time?.value);
+          const arrMs = toMillis(td.arrival_time) || toMillis(td.arrival_time?.value);
+
+          const timeMs = arrMs || depMs;
           if (!timeMs) continue;
 
           trips.push({
@@ -624,30 +631,29 @@
     }
 
     /*******************************************************************
-     * Aggregation + filtro 2h
+     * Dedup + agrupa + janela 2h
      *******************************************************************/
     function aggregateTrips(allTrips){
       const uniqMap = new Map();
       for (const t of allTrips) uniqMap.set(t.key, t);
       const uniq = Array.from(uniqMap.values());
 
+      const now = Date.now();
+      const end = now + TIME_WINDOW_MS;
+
       const groups = new Map();
       for (const t of uniq){
+        if (t.timeMs < now - 20_000) continue;
+        if (t.timeMs > end) continue;
+
         const gKey = `${t.line}||${t.destination}`;
         if (!groups.has(gKey)) groups.set(gKey, { line: t.line, destination: t.destination, times: [] });
         groups.get(gKey).times.push(t.timeMs);
       }
 
-      const now = Date.now();
-      const maxMs = now + TIME_WINDOW_MIN * 60 * 1000;
-
       const cards = [];
       for (const g of groups.values()){
         g.times.sort((a,b) => a-b);
-
-        // remove passado e corta para janela 2h
-        g.times = g.times.filter(ms => ms >= now - 30_000 && ms <= maxMs);
-
         if (!g.times.length) continue;
 
         cards.push({
@@ -667,162 +673,13 @@
       return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
     }
 
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, (m) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-      }[m]));
-    }
-
     /*******************************************************************
-     * Render de uma página (subset)
-     *******************************************************************/
-    function renderPage(items){
-      pageEl.innerHTML = "";
-      pageEl.className = "page"; // reinicia animação
-      void pageEl.offsetWidth;   // force reflow p/ reanimar
-
-      if (!items.length){
-        pageEl.innerHTML = `<div class="empty">Nenhuma saída encontrada nas próximas 2 horas.</div>`;
-        return;
-      }
-
-      const frag = document.createDocumentFragment();
-
-      for (const c of items){
-        const comp = companyFromLineNumber(c.line);
-        const el = document.createElement("div");
-        el.className = `card ${comp.cls}`;
-
-        const next = c.times[0];
-        const rest = c.times.slice(1); // pílulas
-
-        el.innerHTML = `
-          <div class="leftCol">
-            <div class="lineNum">${escapeHtml(c.line)}</div>
-            <div class="company">
-              <span class="dot"></span>
-              <span>${comp.code}</span>
-            </div>
-          </div>
-
-          <div class="midCol">
-            <div class="dest">${escapeHtml(c.destination)}</div>
-            <div class="metaLine">Próximos: ${c.times.map(fmtHHMM).join(" • ")}</div>
-          </div>
-
-          <div class="rightCol">
-            <div class="nextTime">${fmtHHMM(next)}</div>
-            <div class="pills">
-              ${rest.map(ms => `<div class="pill">${fmtHHMM(ms)}</div>`).join("")}
-            </div>
-          </div>
-        `;
-
-        frag.appendChild(el);
-      }
-
-      pageEl.appendChild(frag);
-    }
-
-    /*******************************************************************
-     * Paginação dinâmica (baseada no espaço disponível)
-     *******************************************************************/
-    function estimateRowsPerPage(totalCards){
-      // Render temporário 1 card para medir altura e calcular quantos cabem
-      if (totalCards <= 1) return totalCards;
-
-      const probe = document.createElement("div");
-      probe.className = "card";
-      probe.style.visibility = "hidden";
-      probe.style.position = "absolute";
-      probe.style.left = "-9999px";
-      probe.innerHTML = `
-        <div class="leftCol"><div class="lineNum">000</div><div class="company"><span class="dot"></span><span>VJD</span></div></div>
-        <div class="midCol"><div class="dest">DESTINO EXEMPLO</div><div class="metaLine">Próximos: 00:00 • 00:00</div></div>
-        <div class="rightCol"><div class="nextTime">00:00</div><div class="pills"><div class="pill">00:00</div></div></div>
-      `;
-      document.body.appendChild(probe);
-
-      const cardH = probe.getBoundingClientRect().height || 110;
-      document.body.removeChild(probe);
-
-      const wrapH = listWrapEl.getBoundingClientRect().height || 600;
-      // considera gap ~12px
-      const per = Math.max(4, Math.floor(wrapH / (cardH + 12)));
-      return per;
-    }
-
-    /*******************************************************************
-     * Progress bar + troca de página
-     *******************************************************************/
-    let cardsState = [];
-    let pageIndex = 0;
-    let pageTimer = null;
-    let progressTimer = null;
-
-    function stopPaging(){
-      if (pageTimer) clearInterval(pageTimer);
-      if (progressTimer) clearInterval(progressTimer);
-      pageTimer = null;
-      progressTimer = null;
-    }
-
-    function startPaging(){
-      stopPaging();
-      if (!cardsState.length){
-        renderPage([]);
-        pageInfoEl.textContent = `Página 0/0`;
-        barEl.style.width = "0%";
-        return;
-      }
-
-      const perPage = estimateRowsPerPage(cardsState.length);
-      const totalPages = Math.max(1, Math.ceil(cardsState.length / perPage));
-
-      function draw(){
-        const start = pageIndex * perPage;
-        const slice = cardsState.slice(start, start + perPage);
-        renderPage(slice);
-        pageInfoEl.textContent = `Página ${pageIndex+1}/${totalPages}`;
-      }
-
-      draw();
-
-      // Progress bar
-      let t = 0;
-      barEl.style.width = "0%";
-
-      progressTimer = setInterval(() => {
-        t += 100;
-        const pct = Math.min(100, (t / PAGE_DURATION_MS) * 100);
-        barEl.style.width = pct.toFixed(1) + "%";
-      }, 100);
-
-      pageTimer = setInterval(() => {
-        pageIndex = (pageIndex + 1) % totalPages;
-
-        // reinicia progress
-        t = 0;
-        barEl.style.width = "0%";
-
-        draw();
-      }, PAGE_DURATION_MS);
-
-      // Recalcular páginas se a janela mudar
-      window.addEventListener("resize", () => {
-        // recomeça paginação para recalcular perPage
-        pageIndex = 0;
-        startPaging();
-      }, { passive:true, once:true });
-    }
-
-    /*******************************************************************
-     * Directions: 12 requisições simultâneas
+     * Directions: 12 requisições
      *******************************************************************/
     let directionsService = null;
     let refreshTimer = null;
 
-    function setStatus(text){ statusLineEl.textContent = text; }
+    function setStatus(text){ subStatusEl.textContent = text; }
 
     function requestDirectionsTo(dest){
       return new Promise((resolve) => {
@@ -841,8 +698,198 @@
       });
     }
 
+    /*******************************************************************
+     * Paginação + animação
+     *******************************************************************/
+    let currentCards = [];
+    let pages = [];
+    let pageIndex = 0;
+
+    let pageTimer = null;
+    let progressTimer = null;
+    let pageStart = 0;
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (m) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[m]));
+    }
+
+    function buildCardEl(card){
+      const company = companyFromLineNumber(card.line);
+
+      const el = document.createElement("div");
+      el.className = "card";
+
+      const stripe = document.createElement("div");
+      stripe.className = "stripe";
+      stripe.style.background = company.code === "VSR" ? "var(--vsr)" : "var(--vjd)";
+
+      const dotColor = company.code === "VSR" ? "var(--vsr)" : "var(--vjd)";
+      const pills = card.times.slice(1);
+      const pillsHtml = pills.map(t => `<div class="pill">${fmtHHMM(t)}</div>`).join("");
+
+      el.innerHTML = `
+        <div class="lineCol">
+          <div class="lineNum">${escapeHtml(card.line)}</div>
+          <div class="company">
+            <span class="dot" style="background:${dotColor}"></span>
+            <span>${company.code}</span>
+          </div>
+        </div>
+
+        <div class="destCol">
+          <div class="destName">${escapeHtml(card.destination)}</div>
+          <div class="meta">Próximos 2h • ${card.times.map(fmtHHMM).slice(0,4).join(" • ")}</div>
+        </div>
+
+        <div class="timesCol">
+          <div class="next">
+            <div class="when">${fmtHHMM(card.times[0])}</div>
+            <div class="label">Próximo</div>
+          </div>
+          <div class="pills">${pillsHtml}</div>
+        </div>
+      `;
+      el.prepend(stripe);
+      return el;
+    }
+
+    function clearTimers(){
+      if (pageTimer) clearTimeout(pageTimer);
+      if (progressTimer) clearInterval(progressTimer);
+      pageTimer = null;
+      progressTimer = null;
+    }
+
+    function setPagerLabel(){
+      const total = Math.max(1, pages.length);
+      pageLabelEl.textContent = `PÁGINA ${Math.min(pageIndex+1, total)}/${total}`;
+    }
+
+    function setProgress(p){
+      const pct = Math.max(0, Math.min(100, p));
+      barFillEl.style.width = pct + "%";
+    }
+
+    function measureItemsPerPage(sampleCardEl){
+      const stageRect = stageEl.getBoundingClientRect();
+      const available = stageRect.height;
+
+      const cardRect = sampleCardEl.getBoundingClientRect();
+      const cardH = cardRect.height;
+
+      const gap = 12;
+      let n = Math.floor((available + gap) / (cardH + gap));
+      n = Math.max(MIN_ITEMS_PER_PAGE, n);
+      return n;
+    }
+
+    function paginateCards(cards){
+      stageEl.innerHTML = "";
+      pages = [];
+      pageIndex = 0;
+
+      if (!cards.length){
+        const p = document.createElement("div");
+        p.className = "page active";
+        p.innerHTML = `<div class="empty">Nenhum horário encontrado nas próximas 2 horas.</div>`;
+        stageEl.appendChild(p);
+        pages = [p];
+        setPagerLabel();
+        setProgress(100);
+        return;
+      }
+
+      // medição
+      const sample = buildCardEl(cards[0]);
+      const tmp = document.createElement("div");
+      tmp.style.position = "absolute";
+      tmp.style.inset = "var(--pad)";
+      tmp.style.visibility = "hidden";
+      tmp.style.pointerEvents = "none";
+      tmp.style.display = "grid";
+      tmp.style.gap = "12px";
+      tmp.appendChild(sample);
+      stageEl.appendChild(tmp);
+
+      const perPage = measureItemsPerPage(sample);
+      stageEl.removeChild(tmp);
+
+      for (let i=0; i<cards.length; i += perPage){
+        const chunk = cards.slice(i, i+perPage);
+
+        const page = document.createElement("div");
+        page.className = "page";
+        for (const c of chunk){
+          const cardEl = buildCardEl(c);
+
+          // no máximo 6 pílulas para manter leitura limpa
+          const pillsEl = cardEl.querySelector(".pills");
+          if (pillsEl){
+            const pills = Array.from(pillsEl.children);
+            if (pills.length > 6) pills.slice(6).forEach(x => x.remove());
+          }
+
+          page.appendChild(cardEl);
+        }
+        stageEl.appendChild(page);
+        pages.push(page);
+      }
+
+      pages[0].classList.add("active");
+      setPagerLabel();
+      startPaging();
+    }
+
+    function showPage(nextIndex){
+      if (!pages.length) return;
+
+      const from = pages[pageIndex];
+      const to = pages[nextIndex];
+      if (from === to) return;
+
+      from.classList.remove("active");
+      from.classList.add("exit");
+
+      to.classList.remove("exit");
+      void to.offsetWidth;
+      to.classList.add("active");
+
+      setTimeout(() => from.classList.remove("exit"), 560);
+
+      pageIndex = nextIndex;
+      setPagerLabel();
+      setProgress(0);
+    }
+
+    function startPaging(){
+      clearTimers();
+      if (pages.length <= 1){
+        setProgress(100);
+        return;
+      }
+
+      pageStart = Date.now();
+      setProgress(0);
+
+      progressTimer = setInterval(() => {
+        const elapsed = Date.now() - pageStart;
+        setProgress((elapsed / PAGE_DURATION_MS) * 100);
+      }, PAGE_PROGRESS_TICK_MS);
+
+      pageTimer = setTimeout(() => {
+        const next = (pageIndex + 1) % pages.length;
+        showPage(next);
+        startPaging();
+      }, PAGE_DURATION_MS);
+    }
+
+    /*******************************************************************
+     * Refresh API
+     *******************************************************************/
     async function refreshData(){
-      setStatus("Buscando linhas…");
+      setStatus("Buscando linhas (varredura 360º)…");
       const t0 = performance.now();
 
       if (!directionsService) directionsService = new google.maps.DirectionsService();
@@ -860,20 +907,20 @@
         }
       }
 
-      cardsState = aggregateTrips(allTrips);
+      const cards = aggregateTrips(allTrips);
+      currentCards = cards;
 
-      const now = new Date();
-      updatedInfoEl.textContent = `Atualizado • ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+      paginateCards(cards);
 
       const dt = Math.round(performance.now() - t0);
-      if (!okCount){
-        setStatus("Sem resposta da API (verifique a KEY/restrições)");
-      } else {
-        setStatus(`Linhas: ${cardsState.length} • OK: ${okCount}/12 • ${dt}ms`);
-      }
+      const now = new Date();
+      lastUpdateEl.textContent = `Última atualização • ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
 
-      pageIndex = 0;
-      startPaging();
+      if (!okCount){
+        setStatus("Sem resposta da API (verifique a KEY e restrições).");
+      } else {
+        setStatus(`Linhas: ${cards.length} • OK: ${okCount}/12 • ${dt}ms`);
+      }
     }
 
     function scheduleRefresh(){
@@ -884,23 +931,23 @@
     /*******************************************************************
      * BOOT
      *******************************************************************/
+    startClock();
+
     (async function boot(){
       try{
         setStatus("Carregando Google Maps…");
         await loadGoogleMaps();
-        setStatus("Atualizando…");
+        warnEl.style.display = "none";
+        setStatus("Atualizando linhas…");
         await refreshData();
         scheduleRefresh();
+
+        window.addEventListener("resize", () => paginateCards(currentCards || []));
       }catch(err){
         console.warn(err);
-        setStatus("Insira sua API Key e publique novamente");
-        cardsState = [];
-        startPaging();
+        setStatus("Aguardando API Key…");
       }
     })();
-    
   </script>
 </body>
 </html>
-
-
