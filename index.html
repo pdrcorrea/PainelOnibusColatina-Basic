@@ -3,458 +3,469 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PontoView • Painel de Ônibus</title>
+  <title>Next Bus • Estação Central (Básico)</title>
 
   <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
   <!-- Fonte -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      /* Base PontoView (aprox. da sua identidade) */
-      --pv-navy: #0B2A55;
-      --pv-blue: #1F5FA8;
-      --pv-sky:  #57B8E7;
-      --pv-cyan: #26C6CF;
+      --bg0:#081423;
+      --bg1:#0a2232;
 
-      --pv-grad: linear-gradient(90deg, var(--pv-blue), var(--pv-sky), var(--pv-cyan));
-      --pv-grad-soft: linear-gradient(90deg, rgba(31,95,168,.14), rgba(87,184,231,.14), rgba(38,198,207,.14));
+      --panel:#ffffff;
+      --panel2:#f5f7fb;
 
-      /* UI */
-      --bg: #F3F6FB;
-      --card: #FFFFFF;
-      --stroke: #E6ECF5;
-      --shadow: 0 10px 24px rgba(15, 23, 42, .10);
+      --text:#0f172a;
+      --dim:#475569;
 
-      --text: #0F172A;
-      --muted: #425466;
+      --stroke:#d8e1ee;
+      --stroke2:#e6edf7;
 
-      --green: #22C55E;
+      --shadow: 0 18px 60px rgba(2,10,23,.18);
 
-      --glass: rgba(255,255,255,.55);
-      --glassStroke: rgba(255,255,255,.75);
+      --vjd:#0f3f82; /* azul escuro */
+      --vsr:#5fc2ff; /* azul claro */
 
-      --r: 16px;
-      --pad: clamp(14px, 1.7vw, 20px);
+      --ok:#1fa765;
+      --okSoft: rgba(31, 167, 101, .12);
+
+      --r: 18px;
+      --pad: clamp(14px, 2.0vw, 22px);
+
+      /* Paginação */
+      --bar: #1c5aa6;
+      --bar2: #34c6d0;
+      --header: linear-gradient(90deg, #0b2c5a, #1976b7);
     }
 
     *{ box-sizing:border-box; }
-    html, body{ height:100%; }
+    html,body{ height:100%; }
     body{
       margin:0;
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);
       color: var(--text);
       overflow:hidden;
-    }
 
-    /* BACKGROUND PontoView (textura) */
-    .bgPattern{
-      position: fixed;
-      inset: 0;
-      pointer-events:none;
       background:
-        radial-gradient(1200px 700px at 15% 10%, rgba(38,198,207,.10), transparent 55%),
-        radial-gradient(900px 600px at 85% 70%, rgba(87,184,231,.10), transparent 60%),
-        url("assets/bg-blue.png");
-      background-size: cover, cover, cover;
-      background-position: center, center, center;
-      opacity: .10; /* bem leve pra não cansar */
-      filter: saturate(1.05);
-      z-index: -2;
+        radial-gradient(1200px 900px at 25% 10%, rgba(87,184,231,.22) 0%, rgba(10,46,62,0) 60%),
+        radial-gradient(900px 700px at 75% 80%, rgba(52,198,208,.14) 0%, rgba(6,18,24,0) 65%),
+        radial-gradient(1400px 1100px at 50% 55%, var(--bg1) 0%, var(--bg0) 62%, #040a0f 100%);
     }
 
-    /* camada branca suave por cima para manter leitura */
-    .bgWash{
-      position: fixed;
-      inset: 0;
-      pointer-events:none;
-      background: linear-gradient(180deg, rgba(243,246,251,.82), rgba(243,246,251,.92));
-      z-index: -1;
+    /* layout */
+    .app{
+      height:100%;
+      display:grid;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+      padding: clamp(12px, 2vw, 22px);
     }
 
-    /* HEADER */
-    .header{
-      height: 118px;
-      padding: 16px 22px;
+    /* Cabeçalho “de antes”: sinalização digital */
+    header{
+      padding: 18px var(--pad);
+      border-radius: var(--r);
+      background: var(--header);
+      color: #fff;
+      box-shadow: var(--shadow);
       display:flex;
       align-items:center;
       justify-content:space-between;
-      background: linear-gradient(90deg, rgba(11,42,85,.96), rgba(31,95,168,.96));
-      border-bottom: 4px solid rgba(38,198,207,.95);
-      color: #fff;
-    }
+      gap: 16px;
 
-    .hLeft{
+      opacity:0;
+      transform: translateY(10px);
+      animation: inTop 800ms cubic-bezier(.22,1,.36,1) forwards;
+    }
+    @keyframes inTop{ to{ opacity:1; transform: translateY(0);} }
+
+    .h-left{
       display:flex;
       align-items:center;
       gap: 16px;
       min-width: 0;
     }
+    .busIcon{
+      width: 46px; height: 46px;
+      border-radius: 14px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.14);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
+      flex: 0 0 auto;
+    }
+    .busIcon .material-icons-outlined{ font-size: 26px; }
 
-    .logo{
-      height: 54px;
-      width: auto;
-      display:block;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.18));
+    .titleBlock{ min-width:0; }
+    .title{
+      font-size: clamp(22px, 2.6vw, 34px);
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .sub{
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      opacity: .88;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 70vw;
     }
 
-    .hText{
+    .h-right{
+      text-align:right;
+      white-space:nowrap;
       display:flex;
       flex-direction:column;
-      gap: 8px;
-      min-width:0;
-    }
-
-    .hTitle{
-      font-size: clamp(18px, 2.5vw, 34px);
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      line-height: 1;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .hSub{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      opacity:.95;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width: 56vw;
-    }
-    .hSub .material-icons-outlined{ font-size:20px; }
-
-    /* relógio e data */
-    .clockBox{
-      min-width: 310px;
-      text-align:right;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.20);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      gap: 6px;
+      align-items:flex-end;
     }
     .clock{
-      font-size: clamp(32px, 4.1vw, 52px);
+      font-size: clamp(40px, 4.4vw, 58px);
       font-weight: 900;
-      letter-spacing: .02em;
-      color: #EAF7FF;
+      letter-spacing: .06em;
       line-height: 1;
     }
-    .clockDate{
-      margin-top: 6px;
+    .lastUpdate{
       font-size: 12px;
       font-weight: 800;
-      letter-spacing: .14em;
+      letter-spacing: .12em;
       text-transform: uppercase;
-      color: rgba(255,255,255,.92);
-      white-space:nowrap;
+      opacity: .85;
+    }
+
+    /* Painel */
+    .panel{
+      border-radius: var(--r);
+      background: var(--panel);
+      box-shadow: var(--shadow);
       overflow:hidden;
-      text-overflow:ellipsis;
-    }
 
-    /* CONTEÚDO */
-    .main{
-      height: calc(100% - 118px);
-      padding: 16px 22px;
-      display:grid;
-      grid-template-rows: auto 1fr auto;
-      gap: 12px;
+      opacity:0;
+      transform: translateY(12px);
+      animation: inPanel 900ms cubic-bezier(.22,1,.36,1) .06s forwards;
     }
+    @keyframes inPanel{ to{ opacity:1; transform: translateY(0);} }
 
-    .topRow{
+    .panelTop{
+      padding: 12px var(--pad);
+      background: #f3f7ff;
+      border-bottom: 1px solid var(--stroke2);
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap: 12px;
+      flex-wrap:wrap;
     }
-
-    .status{
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width: 55vw;
-    }
-
-    /* paginação + barra */
-    .pager{
-      display:flex;
-      align-items:center;
-      gap: 12px;
-      justify-content:flex-end;
-      color: var(--muted);
+    .panelInfo{
       font-size: 12px;
       font-weight: 900;
       letter-spacing: .12em;
       text-transform: uppercase;
-      min-width: 360px;
+      color: #1f2a44;
+    }
+
+    .pager{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
     }
     .bar{
-      width: 230px;
+      width: 240px;
       height: 10px;
       border-radius: 999px;
-      background: #DCE6F5;
-      border: 1px solid #C9D7EE;
+      background: #e7eefb;
+      border: 1px solid #d6e2f4;
       overflow:hidden;
     }
     .bar > div{
       height:100%;
       width:0%;
-      background: var(--pv-grad);
+      background: linear-gradient(90deg, var(--bar), var(--bar2));
       border-radius: 999px;
       transition: width 120ms linear;
     }
 
-    .pageWrap{
-      overflow:hidden;
-      display:grid;
-      align-content:start;
-      gap: 14px;
-    }
-
-    .empty{
-      padding: 30px;
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      border-radius: var(--r);
-      box-shadow: var(--shadow);
-      text-align:center;
-      color: var(--muted);
+    .warn{
+      display:none;
+      margin: 12px var(--pad) 0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #fff7ed;
+      border: 1px dashed #fdba74;
+      color: #7c2d12;
+      font-size: 12px;
       font-weight: 900;
-      letter-spacing: .12em;
+      letter-spacing: .10em;
       text-transform: uppercase;
     }
 
-    /* CARD (simples + agradável) */
-    .card{
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      border-radius: var(--r);
-      box-shadow: var(--shadow);
-      display:grid;
-      grid-template-columns: 150px 1fr 300px;
-      gap: 14px;
-      align-items:center;
-      padding: 18px 18px;
+    .stage{
       position:relative;
+      height: calc(100% - 56px);
+      padding: var(--pad);
+      overflow:hidden;
+      background: var(--panel);
     }
 
-    /* faixa PontoView */
-    .card::before{
-      content:"";
+    /* Animação troca de página */
+    .page{
       position:absolute;
-      left:0; top:0; bottom:0;
-      width: 6px;
-      border-radius: var(--r) 0 0 var(--r);
-      background: var(--pv-grad);
+      inset: var(--pad);
+      display:grid;
+      gap: 12px;
+      align-content:start;
+      opacity:0;
+      transform: translateX(18px);
+      pointer-events:none;
+    }
+    .page.active{
+      opacity:1;
+      transform: translateX(0);
+      pointer-events:auto;
+      transition: opacity 520ms ease, transform 520ms ease;
+    }
+    .page.exit{
+      opacity:0;
+      transform: translateX(-18px);
+      transition: opacity 520ms ease, transform 520ms ease;
+    }
+
+    /* Cards (básico, claro, legível) */
+    .card{
+      position:relative;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid var(--stroke);
+      box-shadow: 0 10px 26px rgba(2,10,23,.08);
+      overflow:hidden;
+      min-height: 92px;
+
+      display:grid;
+      grid-template-columns: 120px 1fr 260px;
+      gap: 14px;
+      align-items:center;
+      padding: 14px 16px;
+    }
+
+    .stripe{
+      position:absolute;
+      inset:0 auto 0 0;
+      width: 8px;
+      background: var(--vjd);
     }
 
     .lineCol{
       display:flex;
       flex-direction:column;
       gap: 10px;
-      padding-left: 6px;
       align-items:flex-start;
+      padding-left: 10px;
     }
     .lineNum{
-      font-size: 54px;
+      font-size: 38px;
       font-weight: 900;
       letter-spacing: .02em;
       line-height: 1;
-      color: #101828;
+      color: #0b1220;
     }
-
-    /* badge com icon da marca (glass discreto) */
-    .badge{
+    .company{
       display:inline-flex;
       align-items:center;
-      gap: 10px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: var(--glass);
-      border: 1px solid var(--glassStroke);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      gap: 8px;
       font-size: 12px;
       font-weight: 900;
-      letter-spacing: .10em;
+      letter-spacing: .12em;
       text-transform: uppercase;
-      color: #0f172a;
-    }
-    .brandIcon{
-      width: 18px;
-      height: 18px;
-      object-fit: contain;
-      border-radius: 6px;
+      color: #0b1220;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke2);
+      background: #f7faff;
     }
     .dot{
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      box-shadow: 0 0 0 2px rgba(15,23,42,.06) inset;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--vjd);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.6);
     }
 
-    .midCol{
+    .destCol{
       min-width:0;
       display:flex;
       flex-direction:column;
       gap: 8px;
     }
-
     .destName{
-      font-size: clamp(22px, 2.4vw, 34px);
+      font-size: clamp(24px, 2.4vw, 32px);
       font-weight: 900;
       letter-spacing: .02em;
-      line-height: 1.1;
       text-transform: uppercase;
+      color: #0b1220;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
-
     .meta{
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 800;
-      color: var(--muted);
-      letter-spacing: .08em;
+      letter-spacing: .12em;
       text-transform: uppercase;
+      color: var(--dim);
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
 
-    .timeCol{
+    .timesCol{
       display:flex;
       flex-direction:column;
       align-items:flex-end;
       gap: 10px;
     }
-
-    /* destaque do próximo (HH:MM) — sem “gritar” */
-    .nextTime{
+    .next{
       width: 100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 14px 16px;
-      border-radius: 12px;
-      background: linear-gradient(180deg, #22c55e, #16a34a);
-      color: #fff;
+      max-width: 240px;
+      text-align:center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: var(--okSoft);
+      border: 2px solid rgba(31, 167, 101, .25);
+    }
+    .next .when{
+      font-size: 36px;
       font-weight: 900;
-      font-size: 42px;
-      letter-spacing: .02em;
-      box-shadow: 0 10px 18px rgba(34,197,94,.18);
+      letter-spacing: .06em;
+      color: var(--ok);
+      line-height: 1.05;
+    }
+    .next .label{
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(31, 167, 101, .88);
     }
 
-    .moreRow{
-      display:flex;
-      gap: 8px;
-      justify-content:flex-end;
-      flex-wrap:nowrap;
+    .pills{
       width: 100%;
+      max-width: 240px;
+      display:flex;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+      gap: 8px;
     }
     .pill{
       padding: 8px 10px;
-      border-radius: 10px;
-      background: #EEF3FB;
-      border: 1px solid #DEE7F6;
-      font-size: 14px;
-      font-weight: 900;
-      color: #314155;
-      letter-spacing: .06em;
-      min-width: 74px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke2);
+      background: #f1f5f9;
+      min-width: 78px;
       text-align:center;
-    }
-
-    .footerRow{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      color: var(--muted);
       font-size: 12px;
       font-weight: 900;
       letter-spacing: .12em;
-      text-transform: uppercase;
-      padding: 0 2px;
+      color: #0b1220;
     }
+
+    .empty{
+      padding: 22px 18px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid var(--stroke2);
+      color: var(--dim);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      text-align:center;
+    }
+
+    .brand{
+      position: fixed;
+      bottom: 14px;
+      right: 16px;
+      opacity: .22;
+      pointer-events:none;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.14));
+    }
+    .brand img{ height: 22px; width:auto; display:block; }
 
     @media (max-width: 980px){
       body{ overflow:auto; }
-      .header{ height:auto; flex-direction:column; align-items:flex-start; gap: 14px; }
-      .clockBox{ width:100%; text-align:left; }
-      .main{ height:auto; }
-      .card{ grid-template-columns: 1fr; }
-      .timeCol{ align-items:flex-start; }
-      .moreRow{ justify-content:flex-start; }
-      .pager{ min-width: 0; }
+      .app{ height:auto; }
+      .stage{ height:auto; min-height: 60vh; }
+      .page{ position:relative; inset:auto; padding:0; opacity:1; transform:none; pointer-events:auto; }
+      .card{ grid-template-columns: 110px 1fr; grid-template-rows:auto auto; }
+      .timesCol{ grid-column: 1 / -1; align-items:flex-start; }
+      .next,.pills{ max-width:none; }
       .bar{ width: 160px; }
+      .brand{ position: static; opacity:.35; padding: 0 16px 16px; }
     }
   </style>
 </head>
 
 <body>
-  <div class="bgPattern" aria-hidden="true"></div>
-  <div class="bgWash" aria-hidden="true"></div>
-
-  <header class="header">
-    <div class="hLeft">
-      <img class="logo" src="assets/logo.png" alt="PontoView" />
-      <div class="hText">
-        <div class="hTitle">Painel de Ônibus</div>
-        <div class="hSub">
-          <span class="material-icons-outlined" aria-hidden="true">location_on</span>
-          <span>Estação Central</span>
+  <div class="app">
+    <header>
+      <div class="h-left">
+        <div class="busIcon" aria-hidden="true">
+          <span class="material-icons-outlined">directions_bus</span>
+        </div>
+        <div class="titleBlock">
+          <div class="title">Estação Central</div>
+          <div class="sub" id="subStatus">Carregando…</div>
         </div>
       </div>
-    </div>
 
-    <div class="clockBox" aria-label="Relógio e data">
-      <div class="clock" id="clock">--:--</div>
-      <div class="clockDate" id="clockDate">—</div>
-    </div>
-  </header>
-
-  <main class="main">
-    <div class="topRow">
-      <div class="status" id="status">Carregando linhas…</div>
-
-      <div class="pager">
-        <span id="pageLabel">PÁGINA 1/1</span>
-        <div class="bar" aria-hidden="true"><div id="barFill"></div></div>
+      <div class="h-right">
+        <div class="clock" id="clock">--:--</div>
+        <div class="lastUpdate" id="lastUpdate">Última atualização • —</div>
       </div>
-    </div>
+    </header>
 
-    <section class="pageWrap" id="pageWrap"></section>
+    <section class="panel" aria-label="Painel de horários">
+      <div class="panelTop">
+        <div class="panelInfo">Próximas saídas (2h) • Next Bus</div>
+        <div class="pager">
+          <span id="pageLabel">PÁGINA 1/1</span>
+          <div class="bar" aria-hidden="true"><div id="barFill"></div></div>
+        </div>
+      </div>
 
-    <div class="footerRow">
-      <div id="lastUpdate">—</div>
-      <div>Somente próximas 2 horas</div>
-    </div>
-  </main>
+      <div class="warn" id="warn"></div>
+      <div class="stage" id="stage"></div>
+    </section>
+  </div>
+
+  <div class="brand" aria-hidden="true">
+    <img src="assets/logo.png" alt="">
+  </div>
+
+  <!-- opcional: config.js  (window.PONTOVIEW_GMAPS_KEY = "SUA_CHAVE"; ) -->
+  <script src="config.js"></script>
 
   <script>
     /*******************************************************************
-     * 🔑 INSIRA AQUI SUA GOOGLE MAPS API KEY
+     * 🔑 CHAVE GOOGLE MAPS
      *******************************************************************/
-    const GOOGLE_MAPS_API_KEY = "AIzaSyA5jfERk5m06bl0eQnFLWSYbFhsQFglyO8";
+    const GOOGLE_MAPS_API_KEY = (window.PONTOVIEW_GMAPS_KEY || "").trim() || "COLE_SUA_API_KEY_AQUI";
 
     /*******************************************************************
      * CONFIG
@@ -462,37 +473,32 @@
     const STATION = { lat: -19.5368231, lng: -40.633973 };
     const SWEEP_POINTS = 12;
     const SWEEP_RADIUS_M = 1200;
-
     const REFRESH_EVERY_MS = 10 * 60 * 1000;
-    const WINDOW_NEXT_HOURS = 2;
-    const MAX_TIMES_PER_LINE = 4;
+    const TIME_WINDOW_MS = 2 * 60 * 60 * 1000;
 
-    // Paginação: mínimo 4, máximo conforme espaço
-    const MIN_ITEMS_PER_PAGE = 4;
+    // Paginação
     const PAGE_DURATION_MS = 12000;
+    const PAGE_PROGRESS_TICK_MS = 120;
+    const MIN_ITEMS_PER_PAGE = 4;
 
     /*******************************************************************
      * UI refs
      *******************************************************************/
-    const statusEl = document.getElementById("status");
-    const pageWrapEl = document.getElementById("pageWrap");
+    const clockEl = document.getElementById("clock");
     const lastUpdateEl = document.getElementById("lastUpdate");
+    const subStatusEl = document.getElementById("subStatus");
+    const warnEl = document.getElementById("warn");
+    const stageEl = document.getElementById("stage");
     const pageLabelEl = document.getElementById("pageLabel");
     const barFillEl = document.getElementById("barFill");
-    const clockEl = document.getElementById("clock");
-    const clockDateEl = document.getElementById("clockDate");
 
     /*******************************************************************
-     * Clock (SEM segundos) + data
+     * Clock (sem segundos)
      *******************************************************************/
-    const weekday = ["DOMINGO","SEGUNDA","TERÇA","QUARTA","QUINTA","SEXTA","SÁBADO"];
-    const month   = ["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"];
     function pad2(n){ return String(n).padStart(2,"0"); }
-
     function tickClock(){
       const d = new Date();
       clockEl.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
-      clockDateEl.textContent = `${weekday[d.getDay()]}, ${pad2(d.getDate())} DE ${month[d.getMonth()]}`;
     }
     function startClock(){
       tickClock();
@@ -509,22 +515,23 @@
 
         const key = (GOOGLE_MAPS_API_KEY || "").trim();
         if (!key || key === "COLE_SUA_API_KEY_AQUI"){
-          statusEl.textContent = "Insira sua Google Maps API Key no código.";
+          warnEl.style.display = "block";
+          warnEl.textContent = "INSIRA SUA GOOGLE MAPS API KEY (config.js OU CONSTANTE GOOGLE_MAPS_API_KEY).";
           return reject(new Error("Missing API key"));
         }
 
-        window.__gmReady = () => resolve();
         const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=__gmReady`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}`;
         script.async = true;
         script.defer = true;
-        script.onerror = () => reject(new Error("Failed to load Google Maps"));
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error("Falha ao carregar Google Maps JS API"));
         document.head.appendChild(script);
       });
     }
 
     /*******************************************************************
-     * Geodesia (12 destinos ao redor)
+     * Geodesia (destinos invisíveis)
      *******************************************************************/
     function toRad(deg){ return deg * Math.PI / 180; }
     function toDeg(rad){ return rad * 180 / Math.PI; }
@@ -558,33 +565,29 @@
     }
 
     /*******************************************************************
-     * Helpers tempo Maps
-     *******************************************************************/
-    function normalizeTimeValue(value){
-      if (value instanceof Date) return value.getTime();
-      if (typeof value === "number" && Number.isFinite(value)) return value < 1e12 ? value * 1000 : value;
-      const n = Number(value);
-      if (Number.isFinite(n)) return n < 1e12 ? n * 1000 : n;
-      return null;
-    }
-    function fmtHHMM(ms){
-      const d = new Date(ms);
-      return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
-    }
-
-    /*******************************************************************
-     * Empresa (VSR 300-499)
+     * Empresa por número
      *******************************************************************/
     function companyFromLineNumber(lineShort){
       const n = parseInt(String(lineShort).replace(/\D/g,""), 10);
-      if (!Number.isFinite(n)) return { code:"VJD", color:"var(--pv-navy)" };
-      if (n >= 300 && n <= 499) return { code:"VSR", color:"var(--pv-cyan)" };
-      return { code:"VJD", color:"var(--pv-navy)" };
+      if (!Number.isFinite(n)) return { code:"VJD", color:"var(--vjd)" };
+      if (n >= 300 && n <= 499) return { code:"VSR", color:"var(--vsr)" };
+      return { code:"VJD", color:"var(--vjd)" };
     }
 
     /*******************************************************************
-     * Parse Directions (TRANSIT)
+     * Parsing Directions (robusto)
      *******************************************************************/
+    function toMillis(v){
+      if (!v) return null;
+      if (v instanceof Date) return v.getTime();
+      if (typeof v === "number"){
+        if (v > 1e12) return v;       // ms
+        if (v > 1e9)  return v*1000;  // s
+      }
+      if (typeof v === "object" && v.value) return toMillis(v.value);
+      return null;
+    }
+
     function extractTripsFromDirectionsResult(result){
       const trips = [];
       if (!result?.routes?.length) return trips;
@@ -600,10 +603,10 @@
           const lineShort = td.line?.short_name || td.line?.name || "—";
           const headsign = td.headsign || td.line?.name || td.arrival_stop?.name || "Destino";
 
-          const depVal = td.departure_time?.value ?? null;
-          const arrVal = td.arrival_time?.value ?? null;
+          const depMs = toMillis(td.departure_time) || toMillis(td.departure_time?.value);
+          const arrMs = toMillis(td.arrival_time) || toMillis(td.arrival_time?.value);
 
-          const timeMs = normalizeTimeValue(arrVal) ?? normalizeTimeValue(depVal);
+          const timeMs = arrMs || depMs;
           if (!timeMs) continue;
 
           trips.push({
@@ -618,42 +621,55 @@
     }
 
     /*******************************************************************
-     * Dedup + janela 2h + agrupamento
+     * Dedup + agrupa + janela 2h
      *******************************************************************/
     function aggregateTrips(allTrips){
-      const now = Date.now();
-      const windowEnd = now + WINDOW_NEXT_HOURS * 60 * 60 * 1000;
-
       const uniqMap = new Map();
       for (const t of allTrips) uniqMap.set(t.key, t);
       const uniq = Array.from(uniqMap.values());
 
-      const filtered = uniq.filter(t => t.timeMs >= now - 30_000 && t.timeMs <= windowEnd);
+      const now = Date.now();
+      const end = now + TIME_WINDOW_MS;
 
       const groups = new Map();
-      for (const t of filtered){
-        const k = `${t.line}||${t.destination}`;
-        if (!groups.has(k)) groups.set(k, { line: t.line, destination: t.destination, times: [] });
-        groups.get(k).times.push(t.timeMs);
+      for (const t of uniq){
+        if (t.timeMs < now - 20_000) continue;
+        if (t.timeMs > end) continue;
+
+        const gKey = `${t.line}||${t.destination}`;
+        if (!groups.has(gKey)) groups.set(gKey, { line: t.line, destination: t.destination, times: [] });
+        groups.get(gKey).times.push(t.timeMs);
       }
 
       const cards = [];
       for (const g of groups.values()){
         g.times.sort((a,b) => a-b);
-        g.times = g.times.slice(0, MAX_TIMES_PER_LINE);
         if (!g.times.length) continue;
 
-        cards.push({ line: g.line, destination: g.destination, times: g.times, nextTime: g.times[0] });
+        cards.push({
+          line: g.line,
+          destination: g.destination,
+          times: g.times,
+          nextTime: g.times[0]
+        });
       }
 
       cards.sort((a,b) => a.nextTime - b.nextTime);
       return cards;
     }
 
+    function fmtHHMM(ms){
+      const d = new Date(ms);
+      return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    }
+
     /*******************************************************************
-     * Directions runner
+     * Directions: 12 requisições
      *******************************************************************/
     let directionsService = null;
+    let refreshTimer = null;
+
+    function setStatus(text){ subStatusEl.textContent = text; }
 
     function requestDirectionsTo(dest){
       return new Promise((resolve) => {
@@ -673,16 +689,15 @@
     }
 
     /*******************************************************************
-     * Paginação dinâmica (mín. 4, máximo por espaço)
+     * Paginação + animação
      *******************************************************************/
-    let allCards = [];
-    let currentPage = 0;
-    let pageTimer = null;
-    let barTimer = null;
-    let pageStartTs = 0;
+    let currentCards = [];
+    let pages = [];
+    let pageIndex = 0;
 
-    let itemsPerPage = MIN_ITEMS_PER_PAGE;
-    let cardHeightCache = null;
+    let pageTimer = null;
+    let progressTimer = null;
+    let pageStart = 0;
 
     function escapeHtml(s){
       return String(s).replace(/[&<>"']/g, (m) => ({
@@ -690,162 +705,217 @@
       }[m]));
     }
 
-    function stopPager(){
-      if (pageTimer) clearInterval(pageTimer);
-      if (barTimer) clearInterval(barTimer);
-      pageTimer = null;
-      barTimer = null;
-    }
-
-    function pageCount(){
-      return Math.max(1, Math.ceil(allCards.length / itemsPerPage));
-    }
-
-    function buildCardElement(c){
-      const company = companyFromLineNumber(c.line);
-      const nextClock = fmtHHMM(c.times[0]);
-      const more = c.times.slice(1, 4);
+    function buildCardEl(card){
+      const company = companyFromLineNumber(card.line);
 
       const el = document.createElement("div");
       el.className = "card";
+
+      const stripe = document.createElement("div");
+      stripe.className = "stripe";
+      stripe.style.background = company.code === "VSR" ? "var(--vsr)" : "var(--vjd)";
+
+      const dotColor = company.code === "VSR" ? "var(--vsr)" : "var(--vjd)";
+      const pills = card.times.slice(1);
+      const pillsHtml = pills.map(t => `<div class="pill">${fmtHHMM(t)}</div>`).join("");
+
       el.innerHTML = `
         <div class="lineCol">
-          <div class="lineNum">${escapeHtml(c.line)}</div>
-          <div class="badge">
-            <img class="brandIcon" src="assets/icon.png" alt="" aria-hidden="true"/>
-            <span class="dot" style="background:${company.color}"></span>
+          <div class="lineNum">${escapeHtml(card.line)}</div>
+          <div class="company">
+            <span class="dot" style="background:${dotColor}"></span>
             <span>${company.code}</span>
           </div>
         </div>
 
-        <div class="midCol">
-          <div class="destName" title="${escapeHtml(c.destination)}">${escapeHtml(c.destination)}</div>
-          <div class="meta">Próximo: ${nextClock}</div>
+        <div class="destCol">
+          <div class="destName">${escapeHtml(card.destination)}</div>
+          <div class="meta">Próximos 2h • ${escapeHtml(fmtHHMM(card.times[0]))}${card.times[1] ? " • " + escapeHtml(fmtHHMM(card.times[1])) : ""}${card.times[2] ? " • " + escapeHtml(fmtHHMM(card.times[2])) : ""}</div>
         </div>
 
-        <div class="timeCol">
-          <div class="nextTime">${nextClock}</div>
-          <div class="moreRow">
-            ${more.length ? more.map(ms => `<div class="pill">${fmtHHMM(ms)}</div>`).join("") : `<div class="pill" style="opacity:.6">—</div>`}
+        <div class="timesCol">
+          <div class="next">
+            <div class="when">${fmtHHMM(card.times[0])}</div>
+            <div class="label">Próximo</div>
           </div>
+          <div class="pills">${pillsHtml}</div>
         </div>
       `;
+      el.prepend(stripe);
       return el;
     }
 
-    function getGapPx(){
-      const cs = getComputedStyle(pageWrapEl);
-      const gap = (cs.gap || cs.rowGap || "0px").split(" ")[0];
-      const n = parseFloat(gap);
-      return Number.isFinite(n) ? n : 0;
+    function clearTimers(){
+      if (pageTimer) clearTimeout(pageTimer);
+      if (progressTimer) clearInterval(progressTimer);
+      pageTimer = null;
+      progressTimer = null;
     }
 
-    function measureCardHeight(){
-      if (cardHeightCache) return cardHeightCache;
-      const mock = allCards[0] || { line:"000", destination:"DESTINO DE EXEMPLO", times:[Date.now()+600000, Date.now()+1200000, Date.now()+1800000, Date.now()+2400000] };
-      const el = buildCardElement(mock);
-      el.style.visibility = "hidden";
-      el.style.position = "absolute";
-      el.style.left = "-9999px";
-      el.style.top = "0";
-      document.body.appendChild(el);
-      const h = el.getBoundingClientRect().height;
-      document.body.removeChild(el);
-      cardHeightCache = h;
-      return h;
+    function setPagerLabel(){
+      const total = Math.max(1, pages.length);
+      pageLabelEl.textContent = `PÁGINA ${Math.min(pageIndex+1, total)}/${total}`;
     }
 
-    function computeItemsPerPage(){
-      const available = pageWrapEl.getBoundingClientRect().height;
-      const gap = getGapPx();
-      const cardH = measureCardHeight();
-      const raw = Math.floor((available + gap) / (cardH + gap));
-      const clamped = Math.max(MIN_ITEMS_PER_PAGE, raw);
-      itemsPerPage = Math.max(1, Math.min(clamped, allCards.length || clamped));
+    function setProgress(p){
+      const pct = Math.max(0, Math.min(100, p));
+      barFillEl.style.width = pct + "%";
     }
 
-    function renderPage(pageIndex){
-      computeItemsPerPage();
-      const totalPages = pageCount();
-      currentPage = ((pageIndex % totalPages) + totalPages) % totalPages;
+    function measureItemsPerPage(sampleCardEl){
+      const stageRect = stageEl.getBoundingClientRect();
+      const available = stageRect.height;
 
-      pageLabelEl.textContent = `PÁGINA ${currentPage + 1}/${totalPages}`;
+      const cardRect = sampleCardEl.getBoundingClientRect();
+      const cardH = cardRect.height;
 
-      const start = currentPage * itemsPerPage;
-      const slice = allCards.slice(start, start + itemsPerPage);
+      const gap = 12;
+      let n = Math.floor((available + gap) / (cardH + gap));
+      n = Math.max(MIN_ITEMS_PER_PAGE, n);
+      return n;
+    }
 
-      pageWrapEl.innerHTML = "";
-      if (!slice.length){
-        pageWrapEl.innerHTML = `<div class="empty">Sem horários nas próximas ${WINDOW_NEXT_HOURS} horas.</div>`;
+    function paginateCards(cards){
+      stageEl.innerHTML = "";
+      pages = [];
+      pageIndex = 0;
+
+      if (!cards.length){
+        const p = document.createElement("div");
+        p.className = "page active";
+        p.innerHTML = `<div class="empty">Nenhum horário encontrado nas próximas 2 horas.</div>`;
+        stageEl.appendChild(p);
+        pages = [p];
+        setPagerLabel();
+        setProgress(100);
         return;
       }
 
-      const frag = document.createDocumentFragment();
-      for (const c of slice) frag.appendChild(buildCardElement(c));
-      pageWrapEl.appendChild(frag);
+      // medição
+      const sample = buildCardEl(cards[0]);
+      const tmp = document.createElement("div");
+      tmp.style.position = "absolute";
+      tmp.style.inset = "var(--pad)";
+      tmp.style.visibility = "hidden";
+      tmp.style.pointerEvents = "none";
+      tmp.style.display = "grid";
+      tmp.style.gap = "12px";
+      tmp.appendChild(sample);
+      stageEl.appendChild(tmp);
+
+      const perPage = measureItemsPerPage(sample);
+      stageEl.removeChild(tmp);
+
+      for (let i=0; i<cards.length; i += perPage){
+        const chunk = cards.slice(i, i+perPage);
+
+        const page = document.createElement("div");
+        page.className = "page";
+        for (const c of chunk){
+          const cardEl = buildCardEl(c);
+
+          // heurística de limpeza: no máximo 6 pílulas
+          const pillsEl = cardEl.querySelector(".pills");
+          if (pillsEl){
+            const pills = Array.from(pillsEl.children);
+            if (pills.length > 6) pills.slice(6).forEach(x => x.remove());
+          }
+
+          page.appendChild(cardEl);
+        }
+        stageEl.appendChild(page);
+        pages.push(page);
+      }
+
+      pages[0].classList.add("active");
+      setPagerLabel();
+      startPaging();
     }
 
-    function startPager(){
-      stopPager();
-      cardHeightCache = null;
-      renderPage(0);
+    function showPage(nextIndex){
+      if (!pages.length) return;
 
-      pageStartTs = performance.now();
-      barFillEl.style.width = "0%";
+      const from = pages[pageIndex];
+      const to = pages[nextIndex];
+      if (from === to) return;
 
-      barTimer = setInterval(() => {
-        const elapsed = performance.now() - pageStartTs;
-        const pct = Math.min(100, (elapsed / PAGE_DURATION_MS) * 100);
-        barFillEl.style.width = pct.toFixed(1) + "%";
-      }, 100);
+      from.classList.remove("active");
+      from.classList.add("exit");
 
-      pageTimer = setInterval(() => {
-        pageStartTs = performance.now();
-        barFillEl.style.width = "0%";
-        renderPage(currentPage + 1);
+      to.classList.remove("exit");
+      void to.offsetWidth;
+      to.classList.add("active");
+
+      setTimeout(() => from.classList.remove("exit"), 560);
+
+      pageIndex = nextIndex;
+      setPagerLabel();
+      setProgress(0);
+    }
+
+    function startPaging(){
+      clearTimers();
+      if (pages.length <= 1){
+        setProgress(100);
+        return;
+      }
+
+      pageStart = Date.now();
+      setProgress(0);
+
+      progressTimer = setInterval(() => {
+        const elapsed = Date.now() - pageStart;
+        setProgress((elapsed / PAGE_DURATION_MS) * 100);
+      }, PAGE_PROGRESS_TICK_MS);
+
+      pageTimer = setTimeout(() => {
+        const next = (pageIndex + 1) % pages.length;
+        showPage(next);
+        startPaging();
       }, PAGE_DURATION_MS);
     }
 
-    let resizeRaf = null;
-    window.addEventListener("resize", () => {
-      if (resizeRaf) cancelAnimationFrame(resizeRaf);
-      resizeRaf = requestAnimationFrame(() => {
-        if (!allCards.length) return;
-        startPager();
-      });
-    });
-
     /*******************************************************************
-     * Refresh data
+     * Refresh API
      *******************************************************************/
     async function refreshData(){
-      statusEl.textContent = "Buscando linhas…";
+      setStatus("Buscando linhas (varredura 360º)…");
+      const t0 = performance.now();
 
       if (!directionsService) directionsService = new google.maps.DirectionsService();
 
       const destinations = buildSweepDestinations();
       const responses = await Promise.all(destinations.map(d => requestDirectionsTo(d)));
 
-      const trips = [];
-      let ok = 0;
+      const allTrips = [];
+      let okCount = 0;
+
       for (const r of responses){
         if (r.ok){
-          ok++;
-          trips.push(...extractTripsFromDirectionsResult(r.result));
+          okCount++;
+          allTrips.push(...extractTripsFromDirectionsResult(r.result));
         }
       }
 
-      allCards = aggregateTrips(trips);
+      const cards = aggregateTrips(allTrips);
+      currentCards = cards;
 
+      paginateCards(cards);
+
+      const dt = Math.round(performance.now() - t0);
       const now = new Date();
-      lastUpdateEl.textContent = `Atualizado • ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
-      statusEl.textContent = ok ? `Linhas exibidas: ${allCards.length} • Janela: ${WINDOW_NEXT_HOURS}h` : "Sem resposta da API (verifique key/restrições).";
+      lastUpdateEl.textContent = `Última atualização • ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
 
-      startPager();
+      if (!okCount){
+        setStatus("Sem resposta da API (verifique a KEY e restrições).");
+      } else {
+        setStatus(`Linhas: ${cards.length} • OK: ${okCount}/12 • ${dt}ms`);
+      }
     }
 
     function scheduleRefresh(){
-      setInterval(refreshData, REFRESH_EVERY_MS);
+      if (refreshTimer) clearInterval(refreshTimer);
+      refreshTimer = setInterval(refreshData, REFRESH_EVERY_MS);
     }
 
     /*******************************************************************
@@ -855,15 +925,19 @@
 
     (async function boot(){
       try{
+        setStatus("Carregando Google Maps…");
         await loadGoogleMaps();
+        warnEl.style.display = "none";
+        setStatus("Atualizando linhas…");
         await refreshData();
         scheduleRefresh();
+
+        window.addEventListener("resize", () => paginateCards(currentCards || []));
       }catch(err){
-        statusEl.textContent = "Insira uma API Key válida (Google Maps).";
         console.warn(err);
+        setStatus("Aguardando API Key…");
       }
     })();
   </script>
 </body>
 </html>
-
