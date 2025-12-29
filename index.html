@@ -819,12 +819,13 @@
         for (const c of chunk){
           const cardEl = buildCardEl(c);
 
-          // heurística de limpeza: no máximo 6 pílulas
-          const pillsEl = cardEl.querySelector(".pills");
-          if (pillsEl){
-            const pills = Array.from(pillsEl.children);
-            if (pills.length > 6) pills.slice(6).forEach(x => x.remove());
-          }
+          // no máximo 6 pílulas para manter leitura limpa
+        const pillsEl = cardEl.querySelector(".pills");
+        if (pillsEl){
+          const pills = Array.from(pillsEl.children);
+          if (pills.length > 6) pills.slice(6).forEach(x => x.remove());
+        }
+
 
           page.appendChild(cardEl);
         }
@@ -946,4 +947,5 @@
   </script>
 </body>
 </html>
+
 
