@@ -368,9 +368,14 @@
       max-width: 240px;
       display:flex;
       justify-content:flex-end;
-      flex-wrap:wrap;
+      align-items:center;
+
+      /* 👇 garante UMA linha */
+      flex-wrap: nowrap;
+      overflow: hidden;
       gap: 8px;
     }
+
     .pill{
       padding: 8px 10px;
       border-radius: 999px;
@@ -941,3 +946,4 @@
   </script>
 </body>
 </html>
+
