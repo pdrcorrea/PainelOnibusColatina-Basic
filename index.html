@@ -42,7 +42,7 @@
       --bar2: #34c6d0;
 
       /* Cabeçalho integrado */
-      --header: linear-gradient(90deg, #0b2c5a, #1976b7);
+      --header: linear-gradient(180deg, #2f6f9d 0%, #184c75 55%, #0f3b5e 100%);
     }
 
     *{ box-sizing:border-box; }
@@ -81,77 +81,89 @@
     }
     @keyframes inPanel{ to{ opacity:1; transform: translateY(0);} }
 
-    /* Cabeçalho integrado (faixa azul) */
-    .header{
-      padding: 18px var(--pad);
-      background: var(--header);
-      color:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 16px;
-    }
+/* Cabeçalho sutil (estilo clima) */
+.header{
+  padding: 14px var(--pad);
+  background: var(--header);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 14px;
 
-    .h-left{
-      display:flex;
-      align-items:center;
-      gap: 16px;
-      min-width: 0;
-    }
-    .busIcon{
-      width: 46px; height: 46px;
-      border-radius: 14px;
-      display:grid; place-items:center;
-      background: rgba(255,255,255,.14);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
-      flex: 0 0 auto;
-    }
-    .busIcon .material-icons-outlined{ font-size: 26px; }
+  /* “faixa” mais limpa */
+  box-shadow: inset 0 -1px 0 rgba(255,255,255,.18);
+}
 
-    .titleBlock{ min-width:0; }
-    .title{
-      font-size: clamp(22px, 2.6vw, 34px);
-      font-weight: 900;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .sub{
-      margin-top: 6px;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      opacity: .90;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width: 70vw;
-    }
+.h-left{
+  display:flex;
+  align-items:center;
+  gap: 14px;
+  min-width: 0;
+}
 
-    .h-right{
-      text-align:right;
-      white-space:nowrap;
-      display:flex;
-      flex-direction:column;
-      gap: 6px;
-      align-items:flex-end;
-    }
-    .clock{
-      font-size: clamp(40px, 4.4vw, 58px);
-      font-weight: 900;
-      letter-spacing: .06em;
-      line-height: 1;
-    }
-    .lastUpdate{
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      opacity: .90;
-    }
+.busIcon{
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  display:grid; place-items:center;
+
+  /* mais sutil */
+  background: rgba(255,255,255,.10);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
+  flex: 0 0 auto;
+}
+.busIcon .material-icons-outlined{ font-size: 24px; opacity: .95; }
+
+.titleBlock{ min-width:0; }
+
+/* Menos “gritado”, mais painel */
+.title{
+  font-size: clamp(18px, 2.2vw, 30px);
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.sub{
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .92;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width: 70vw;
+}
+
+.h-right{
+  text-align:right;
+  white-space:nowrap;
+  display:flex;
+  flex-direction:column;
+  gap: 6px;
+  align-items:flex-end;
+}
+
+/* Hora grande (como no clima), mas sem “inflar” o cabeçalho */
+.clock{
+  font-size: clamp(34px, 4.1vw, 56px);
+  font-weight: 900;
+  letter-spacing: .06em;
+  line-height: 1;
+}
+
+.lastUpdate{
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .92;
+}
 
     /* Faixa topo do conteúdo (igual ao clima) */
     .panelTop{
@@ -1081,7 +1093,7 @@
       if (!okCount){
         setStatus("Sem resposta da API (verifique a KEY e restrições).");
       } else {
-        setStatus(`Linhas: ${cards.length} • OK: ${okCount}/12 • ${dt}ms`);
+        setStatus(`Próximas saídas • ${cards.length} linhas`);
       }
     }
 
@@ -1113,3 +1125,4 @@
   </script>
 </body>
 </html>
+
