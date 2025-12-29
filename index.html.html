@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PontoView • Painel de Ônibus</title>
+
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <!-- Fonte -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      /* Base PontoView (aprox. da sua identidade) */
+      --pv-navy: #0B2A55;
+      --pv-blue: #1F5FA8;
+      --pv-sky:  #57B8E7;
+      --pv-cyan: #26C6CF;
+
+      --pv-grad: linear-gradient(90deg, var(--pv-blue), var(--pv-sky), var(--pv-cyan));
+      --pv-grad-soft: linear-gradient(90deg, rgba(31,95,168,.14), rgba(87,184,231,.14), rgba(38,198,207,.14));
+
+      /* UI */
+      --bg: #F3F6FB;
+      --card: #FFFFFF;
+      --stroke: #E6ECF5;
+      --shadow: 0 10px 24px rgba(15, 23, 42, .10);
+
+      --text: #0F172A;
+      --muted: #425466;
+
+      --green: #22C55E;
+
+      --glass: rgba(255,255,255,.55);
+      --glassStroke: rgba(255,255,255,.75);
+
+      --r: 16px;
+      --pad: clamp(14px, 1.7vw, 20px);
+    }
+
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow:hidden;
+    }
+
+    /* BACKGROUND PontoView (textura) */
+    .bgPattern{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(38,198,207,.10), transparent 55%),
+        radial-gradient(900px 600px at 85% 70%, rgba(87,184,231,.10), transparent 60%),
+        url("assets/bg-blue.png");
+      background-size: cover, cover, cover;
+      background-position: center, center, center;
+      opacity: .10; /* bem leve pra não cansar */
+      filter: saturate(1.05);
+      z-index: -2;
+    }
+
+    /* camada branca suave por cima para manter leitura */
+    .bgWash{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      background: linear-gradient(180deg, rgba(243,246,251,.82), rgba(243,246,251,.92));
+      z-index: -1;
+    }
+
+    /* HEADER */
+    .header{
+      height: 118px;
+      padding: 16px 22px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background: linear-gradient(90deg, rgba(11,42,85,.96), rgba(31,95,168,.96));
+      border-bottom: 4px solid rgba(38,198,207,.95);
+      color: #fff;
+    }
+
+    .hLeft{
+      display:flex;
+      align-items:center;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .logo{
+      height: 54px;
+      width: auto;
+      display:block;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.18));
+    }
+
+    .hText{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+      min-width:0;
+    }
+
+    .hTitle{
+      font-size: clamp(18px, 2.5vw, 34px);
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      line-height: 1;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .hSub{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      opacity:.95;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 56vw;
+    }
+    .hSub .material-icons-outlined{ font-size:20px; }
+
+    /* relógio e data */
+    .clockBox{
+      min-width: 310px;
+      text-align:right;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.20);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .clock{
+      font-size: clamp(32px, 4.1vw, 52px);
+      font-weight: 900;
+      letter-spacing: .02em;
+      color: #EAF7FF;
+      line-height: 1;
+    }
+    .clockDate{
+      margin-top: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.92);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    /* CONTEÚDO */
+    .main{
+      height: calc(100% - 118px);
+      padding: 16px 22px;
+      display:grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 12px;
+    }
+
+    .topRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+
+    .status{
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 55vw;
+    }
+
+    /* paginação + barra */
+    .pager{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      justify-content:flex-end;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      min-width: 360px;
+    }
+    .bar{
+      width: 230px;
+      height: 10px;
+      border-radius: 999px;
+      background: #DCE6F5;
+      border: 1px solid #C9D7EE;
+      overflow:hidden;
+    }
+    .bar > div{
+      height:100%;
+      width:0%;
+      background: var(--pv-grad);
+      border-radius: 999px;
+      transition: width 120ms linear;
+    }
+
+    .pageWrap{
+      overflow:hidden;
+      display:grid;
+      align-content:start;
+      gap: 14px;
+    }
+
+    .empty{
+      padding: 30px;
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      text-align:center;
+      color: var(--muted);
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    /* CARD (simples + agradável) */
+    .card{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      display:grid;
+      grid-template-columns: 150px 1fr 300px;
+      gap: 14px;
+      align-items:center;
+      padding: 18px 18px;
+      position:relative;
+    }
+
+    /* faixa PontoView */
+    .card::before{
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width: 6px;
+      border-radius: var(--r) 0 0 var(--r);
+      background: var(--pv-grad);
+    }
+
+    .lineCol{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      padding-left: 6px;
+      align-items:flex-start;
+    }
+    .lineNum{
+      font-size: 54px;
+      font-weight: 900;
+      letter-spacing: .02em;
+      line-height: 1;
+      color: #101828;
+    }
+
+    /* badge com icon da marca (glass discreto) */
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--glass);
+      border: 1px solid var(--glassStroke);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      color: #0f172a;
+    }
+    .brandIcon{
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+    .dot{
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      box-shadow: 0 0 0 2px rgba(15,23,42,.06) inset;
+    }
+
+    .midCol{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
+
+    .destName{
+      font-size: clamp(22px, 2.4vw, 34px);
+      font-weight: 900;
+      letter-spacing: .02em;
+      line-height: 1.1;
+      text-transform: uppercase;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .meta{
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .timeCol{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap: 10px;
+    }
+
+    /* destaque do próximo (HH:MM) — sem “gritar” */
+    .nextTime{
+      width: 100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #22c55e, #16a34a);
+      color: #fff;
+      font-weight: 900;
+      font-size: 42px;
+      letter-spacing: .02em;
+      box-shadow: 0 10px 18px rgba(34,197,94,.18);
+    }
+
+    .moreRow{
+      display:flex;
+      gap: 8px;
+      justify-content:flex-end;
+      flex-wrap:nowrap;
+      width: 100%;
+    }
+    .pill{
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #EEF3FB;
+      border: 1px solid #DEE7F6;
+      font-size: 14px;
+      font-weight: 900;
+      color: #314155;
+      letter-spacing: .06em;
+      min-width: 74px;
+      text-align:center;
+    }
+
+    .footerRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 0 2px;
+    }
+
+    @media (max-width: 980px){
+      body{ overflow:auto; }
+      .header{ height:auto; flex-direction:column; align-items:flex-start; gap: 14px; }
+      .clockBox{ width:100%; text-align:left; }
+      .main{ height:auto; }
+      .card{ grid-template-columns: 1fr; }
+      .timeCol{ align-items:flex-start; }
+      .moreRow{ justify-content:flex-start; }
+      .pager{ min-width: 0; }
+      .bar{ width: 160px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bgPattern" aria-hidden="true"></div>
+  <div class="bgWash" aria-hidden="true"></div>
+
+  <header class="header">
+    <div class="hLeft">
+      <img class="logo" src="assets/logo.png" alt="PontoView" />
+      <div class="hText">
+        <div class="hTitle">Painel de Ônibus</div>
+        <div class="hSub">
+          <span class="material-icons-outlined" aria-hidden="true">location_on</span>
+          <span>Estação Central</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="clockBox" aria-label="Relógio e data">
+      <div class="clock" id="clock">--:--</div>
+      <div class="clockDate" id="clockDate">—</div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="topRow">
+      <div class="status" id="status">Carregando linhas…</div>
+
+      <div class="pager">
+        <span id="pageLabel">PÁGINA 1/1</span>
+        <div class="bar" aria-hidden="true"><div id="barFill"></div></div>
+      </div>
+    </div>
+
+    <section class="pageWrap" id="pageWrap"></section>
+
+    <div class="footerRow">
+      <div id="lastUpdate">—</div>
+      <div>Somente próximas 2 horas</div>
+    </div>
+  </main>
+
+  <script>
+    /*******************************************************************
+     * 🔑 INSIRA AQUI SUA GOOGLE MAPS API KEY
+     *******************************************************************/
+    const GOOGLE_MAPS_API_KEY = "AIzaSyA5jfERk5m06bl0eQnFLWSYbFhsQFglyO8";
+
+    /*******************************************************************
+     * CONFIG
+     *******************************************************************/
+    const STATION = { lat: -19.5368231, lng: -40.633973 };
+    const SWEEP_POINTS = 12;
+    const SWEEP_RADIUS_M = 1200;
+
+    const REFRESH_EVERY_MS = 10 * 60 * 1000;
+    const WINDOW_NEXT_HOURS = 2;
+    const MAX_TIMES_PER_LINE = 4;
+
+    // Paginação: mínimo 4, máximo conforme espaço
+    const MIN_ITEMS_PER_PAGE = 4;
+    const PAGE_DURATION_MS = 12000;
+
+    /*******************************************************************
+     * UI refs
+     *******************************************************************/
+    const statusEl = document.getElementById("status");
+    const pageWrapEl = document.getElementById("pageWrap");
+    const lastUpdateEl = document.getElementById("lastUpdate");
+    const pageLabelEl = document.getElementById("pageLabel");
+    const barFillEl = document.getElementById("barFill");
+    const clockEl = document.getElementById("clock");
+    const clockDateEl = document.getElementById("clockDate");
+
+    /*******************************************************************
+     * Clock (SEM segundos) + data
+     *******************************************************************/
+    const weekday = ["DOMINGO","SEGUNDA","TERÇA","QUARTA","QUINTA","SEXTA","SÁBADO"];
+    const month   = ["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"];
+    function pad2(n){ return String(n).padStart(2,"0"); }
+
+    function tickClock(){
+      const d = new Date();
+      clockEl.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+      clockDateEl.textContent = `${weekday[d.getDay()]}, ${pad2(d.getDate())} DE ${month[d.getMonth()]}`;
+    }
+    function startClock(){
+      tickClock();
+      const ms = 1000 - new Date().getMilliseconds();
+      setTimeout(() => { tickClock(); setInterval(tickClock, 1000); }, ms);
+    }
+
+    /*******************************************************************
+     * Loader Google Maps
+     *******************************************************************/
+    function loadGoogleMaps(){
+      return new Promise((resolve, reject) => {
+        if (window.google?.maps) return resolve();
+
+        const key = (GOOGLE_MAPS_API_KEY || "").trim();
+        if (!key || key === "COLE_SUA_API_KEY_AQUI"){
+          statusEl.textContent = "Insira sua Google Maps API Key no código.";
+          return reject(new Error("Missing API key"));
+        }
+
+        window.__gmReady = () => resolve();
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=__gmReady`;
+        script.async = true;
+        script.defer = true;
+        script.onerror = () => reject(new Error("Failed to load Google Maps"));
+        document.head.appendChild(script);
+      });
+    }
+
+    /*******************************************************************
+     * Geodesia (12 destinos ao redor)
+     *******************************************************************/
+    function toRad(deg){ return deg * Math.PI / 180; }
+    function toDeg(rad){ return rad * 180 / Math.PI; }
+
+    function destinationPoint(lat, lng, bearingDeg, distanceM){
+      const R = 6371000;
+      const brng = toRad(bearingDeg);
+      const dDivR = distanceM / R;
+      const lat1 = toRad(lat);
+      const lon1 = toRad(lng);
+
+      const lat2 = Math.asin(
+        Math.sin(lat1)*Math.cos(dDivR) +
+        Math.cos(lat1)*Math.sin(dDivR)*Math.cos(brng)
+      );
+      const lon2 = lon1 + Math.atan2(
+        Math.sin(brng)*Math.sin(dDivR)*Math.cos(lat1),
+        Math.cos(dDivR) - Math.sin(lat1)*Math.sin(lat2)
+      );
+
+      return { lat: toDeg(lat2), lng: toDeg(lon2) };
+    }
+
+    function buildSweepDestinations(){
+      const points = [];
+      for (let i=0;i<SWEEP_POINTS;i++){
+        const bearing = i * (360 / SWEEP_POINTS);
+        points.push(destinationPoint(STATION.lat, STATION.lng, bearing, SWEEP_RADIUS_M));
+      }
+      return points;
+    }
+
+    /*******************************************************************
+     * Helpers tempo Maps
+     *******************************************************************/
+    function normalizeTimeValue(value){
+      if (value instanceof Date) return value.getTime();
+      if (typeof value === "number" && Number.isFinite(value)) return value < 1e12 ? value * 1000 : value;
+      const n = Number(value);
+      if (Number.isFinite(n)) return n < 1e12 ? n * 1000 : n;
+      return null;
+    }
+    function fmtHHMM(ms){
+      const d = new Date(ms);
+      return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    }
+
+    /*******************************************************************
+     * Empresa (VSR 300-499)
+     *******************************************************************/
+    function companyFromLineNumber(lineShort){
+      const n = parseInt(String(lineShort).replace(/\D/g,""), 10);
+      if (!Number.isFinite(n)) return { code:"VJD", color:"var(--pv-navy)" };
+      if (n >= 300 && n <= 499) return { code:"VSR", color:"var(--pv-cyan)" };
+      return { code:"VJD", color:"var(--pv-navy)" };
+    }
+
+    /*******************************************************************
+     * Parse Directions (TRANSIT)
+     *******************************************************************/
+    function extractTripsFromDirectionsResult(result){
+      const trips = [];
+      if (!result?.routes?.length) return trips;
+
+      for (const route of result.routes){
+        const leg = route.legs?.[0];
+        if (!leg?.steps?.length) continue;
+
+        for (const step of leg.steps){
+          if (step.travel_mode !== "TRANSIT" || !step.transit) continue;
+
+          const td = step.transit;
+          const lineShort = td.line?.short_name || td.line?.name || "—";
+          const headsign = td.headsign || td.line?.name || td.arrival_stop?.name || "Destino";
+
+          const depVal = td.departure_time?.value ?? null;
+          const arrVal = td.arrival_time?.value ?? null;
+
+          const timeMs = normalizeTimeValue(arrVal) ?? normalizeTimeValue(depVal);
+          if (!timeMs) continue;
+
+          trips.push({
+            line: String(lineShort),
+            destination: String(headsign),
+            timeMs,
+            key: `${String(lineShort)}|${String(headsign)}|${timeMs}`
+          });
+        }
+      }
+      return trips;
+    }
+
+    /*******************************************************************
+     * Dedup + janela 2h + agrupamento
+     *******************************************************************/
+    function aggregateTrips(allTrips){
+      const now = Date.now();
+      const windowEnd = now + WINDOW_NEXT_HOURS * 60 * 60 * 1000;
+
+      const uniqMap = new Map();
+      for (const t of allTrips) uniqMap.set(t.key, t);
+      const uniq = Array.from(uniqMap.values());
+
+      const filtered = uniq.filter(t => t.timeMs >= now - 30_000 && t.timeMs <= windowEnd);
+
+      const groups = new Map();
+      for (const t of filtered){
+        const k = `${t.line}||${t.destination}`;
+        if (!groups.has(k)) groups.set(k, { line: t.line, destination: t.destination, times: [] });
+        groups.get(k).times.push(t.timeMs);
+      }
+
+      const cards = [];
+      for (const g of groups.values()){
+        g.times.sort((a,b) => a-b);
+        g.times = g.times.slice(0, MAX_TIMES_PER_LINE);
+        if (!g.times.length) continue;
+
+        cards.push({ line: g.line, destination: g.destination, times: g.times, nextTime: g.times[0] });
+      }
+
+      cards.sort((a,b) => a.nextTime - b.nextTime);
+      return cards;
+    }
+
+    /*******************************************************************
+     * Directions runner
+     *******************************************************************/
+    let directionsService = null;
+
+    function requestDirectionsTo(dest){
+      return new Promise((resolve) => {
+        const req = {
+          origin: STATION,
+          destination: dest,
+          travelMode: google.maps.TravelMode.TRANSIT,
+          provideRouteAlternatives: true,
+          transitOptions: { departureTime: new Date() }
+        };
+
+        directionsService.route(req, (result, status) => {
+          if (status === "OK" && result) resolve({ ok:true, result });
+          else resolve({ ok:false, status });
+        });
+      });
+    }
+
+    /*******************************************************************
+     * Paginação dinâmica (mín. 4, máximo por espaço)
+     *******************************************************************/
+    let allCards = [];
+    let currentPage = 0;
+    let pageTimer = null;
+    let barTimer = null;
+    let pageStartTs = 0;
+
+    let itemsPerPage = MIN_ITEMS_PER_PAGE;
+    let cardHeightCache = null;
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (m) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[m]));
+    }
+
+    function stopPager(){
+      if (pageTimer) clearInterval(pageTimer);
+      if (barTimer) clearInterval(barTimer);
+      pageTimer = null;
+      barTimer = null;
+    }
+
+    function pageCount(){
+      return Math.max(1, Math.ceil(allCards.length / itemsPerPage));
+    }
+
+    function buildCardElement(c){
+      const company = companyFromLineNumber(c.line);
+      const nextClock = fmtHHMM(c.times[0]);
+      const more = c.times.slice(1, 4);
+
+      const el = document.createElement("div");
+      el.className = "card";
+      el.innerHTML = `
+        <div class="lineCol">
+          <div class="lineNum">${escapeHtml(c.line)}</div>
+          <div class="badge">
+            <img class="brandIcon" src="assets/icon.png" alt="" aria-hidden="true"/>
+            <span class="dot" style="background:${company.color}"></span>
+            <span>${company.code}</span>
+          </div>
+        </div>
+
+        <div class="midCol">
+          <div class="destName" title="${escapeHtml(c.destination)}">${escapeHtml(c.destination)}</div>
+          <div class="meta">Próximo: ${nextClock}</div>
+        </div>
+
+        <div class="timeCol">
+          <div class="nextTime">${nextClock}</div>
+          <div class="moreRow">
+            ${more.length ? more.map(ms => `<div class="pill">${fmtHHMM(ms)}</div>`).join("") : `<div class="pill" style="opacity:.6">—</div>`}
+          </div>
+        </div>
+      `;
+      return el;
+    }
+
+    function getGapPx(){
+      const cs = getComputedStyle(pageWrapEl);
+      const gap = (cs.gap || cs.rowGap || "0px").split(" ")[0];
+      const n = parseFloat(gap);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function measureCardHeight(){
+      if (cardHeightCache) return cardHeightCache;
+      const mock = allCards[0] || { line:"000", destination:"DESTINO DE EXEMPLO", times:[Date.now()+600000, Date.now()+1200000, Date.now()+1800000, Date.now()+2400000] };
+      const el = buildCardElement(mock);
+      el.style.visibility = "hidden";
+      el.style.position = "absolute";
+      el.style.left = "-9999px";
+      el.style.top = "0";
+      document.body.appendChild(el);
+      const h = el.getBoundingClientRect().height;
+      document.body.removeChild(el);
+      cardHeightCache = h;
+      return h;
+    }
+
+    function computeItemsPerPage(){
+      const available = pageWrapEl.getBoundingClientRect().height;
+      const gap = getGapPx();
+      const cardH = measureCardHeight();
+      const raw = Math.floor((available + gap) / (cardH + gap));
+      const clamped = Math.max(MIN_ITEMS_PER_PAGE, raw);
+      itemsPerPage = Math.max(1, Math.min(clamped, allCards.length || clamped));
+    }
+
+    function renderPage(pageIndex){
+      computeItemsPerPage();
+      const totalPages = pageCount();
+      currentPage = ((pageIndex % totalPages) + totalPages) % totalPages;
+
+      pageLabelEl.textContent = `PÁGINA ${currentPage + 1}/${totalPages}`;
+
+      const start = currentPage * itemsPerPage;
+      const slice = allCards.slice(start, start + itemsPerPage);
+
+      pageWrapEl.innerHTML = "";
+      if (!slice.length){
+        pageWrapEl.innerHTML = `<div class="empty">Sem horários nas próximas ${WINDOW_NEXT_HOURS} horas.</div>`;
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      for (const c of slice) frag.appendChild(buildCardElement(c));
+      pageWrapEl.appendChild(frag);
+    }
+
+    function startPager(){
+      stopPager();
+      cardHeightCache = null;
+      renderPage(0);
+
+      pageStartTs = performance.now();
+      barFillEl.style.width = "0%";
+
+      barTimer = setInterval(() => {
+        const elapsed = performance.now() - pageStartTs;
+        const pct = Math.min(100, (elapsed / PAGE_DURATION_MS) * 100);
+        barFillEl.style.width = pct.toFixed(1) + "%";
+      }, 100);
+
+      pageTimer = setInterval(() => {
+        pageStartTs = performance.now();
+        barFillEl.style.width = "0%";
+        renderPage(currentPage + 1);
+      }, PAGE_DURATION_MS);
+    }
+
+    let resizeRaf = null;
+    window.addEventListener("resize", () => {
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(() => {
+        if (!allCards.length) return;
+        startPager();
+      });
+    });
+
+    /*******************************************************************
+     * Refresh data
+     *******************************************************************/
+    async function refreshData(){
+      statusEl.textContent = "Buscando linhas…";
+
+      if (!directionsService) directionsService = new google.maps.DirectionsService();
+
+      const destinations = buildSweepDestinations();
+      const responses = await Promise.all(destinations.map(d => requestDirectionsTo(d)));
+
+      const trips = [];
+      let ok = 0;
+      for (const r of responses){
+        if (r.ok){
+          ok++;
+          trips.push(...extractTripsFromDirectionsResult(r.result));
+        }
+      }
+
+      allCards = aggregateTrips(trips);
+
+      const now = new Date();
+      lastUpdateEl.textContent = `Atualizado • ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+      statusEl.textContent = ok ? `Linhas exibidas: ${allCards.length} • Janela: ${WINDOW_NEXT_HOURS}h` : "Sem resposta da API (verifique key/restrições).";
+
+      startPager();
+    }
+
+    function scheduleRefresh(){
+      setInterval(refreshData, REFRESH_EVERY_MS);
+    }
+
+    /*******************************************************************
+     * BOOT
+     *******************************************************************/
+    startClock();
+
+    (async function boot(){
+      try{
+        await loadGoogleMaps();
+        await refreshData();
+        scheduleRefresh();
+      }catch(err){
+        statusEl.textContent = "Insira uma API Key válida (Google Maps).";
+        console.warn(err);
+      }
+    })();
+  </script>
+</body>
+</html>
