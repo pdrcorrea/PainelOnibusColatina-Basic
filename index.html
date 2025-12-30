@@ -18,7 +18,6 @@
       --bg1:#0a2232;
 
       --panel:#ffffff;
-      --panel2:#f5f7fb;
 
       --text:#0f172a;
       --dim:#475569;
@@ -41,7 +40,7 @@
       --bar: #1c5aa6;
       --bar2: #34c6d0;
 
-      /* Cabeçalho integrado */
+      /* Cabeçalho sutil */
       --header: linear-gradient(180deg, #2f6f9d 0%, #184c75 55%, #0f3b5e 100%);
     }
 
@@ -63,7 +62,6 @@
       place-items:center;
     }
 
-    /* CARD PRINCIPAL (cabeçalho + conteúdo) */
     .panel{
       width: min(1500px, 96vw);
       height: calc(100vh - clamp(24px, 4vw, 44px));
@@ -81,91 +79,78 @@
     }
     @keyframes inPanel{ to{ opacity:1; transform: translateY(0);} }
 
-/* Cabeçalho sutil (estilo clima) */
-.header{
-  padding: 14px var(--pad);
-  background: var(--header);
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap: 14px;
+    /* Cabeçalho sutil (estilo clima) */
+    .header{
+      padding: 14px var(--pad);
+      background: var(--header);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      box-shadow: inset 0 -1px 0 rgba(255,255,255,.18);
+    }
+    .h-left{
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      min-width: 0;
+    }
+    .busIcon{
+      width: 44px; height: 44px;
+      border-radius: 14px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.10);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
+      flex: 0 0 auto;
+    }
+    .busIcon .material-icons-outlined{ font-size: 24px; opacity: .95; }
 
-  /* “faixa” mais limpa */
-  box-shadow: inset 0 -1px 0 rgba(255,255,255,.18);
-}
+    .titleBlock{ min-width:0; }
+    .title{
+      font-size: clamp(18px, 2.2vw, 30px);
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .sub{
+      margin-top: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      opacity: .92;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 70vw;
+    }
+    .h-right{
+      text-align:right;
+      white-space:nowrap;
+      display:flex;
+      flex-direction:column;
+      gap: 6px;
+      align-items:flex-end;
+    }
+    .clock{
+      font-size: clamp(34px, 4.1vw, 56px);
+      font-weight: 900;
+      letter-spacing: .06em;
+      line-height: 1;
+    }
+    .lastUpdate{
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      opacity: .92;
+    }
 
-.h-left{
-  display:flex;
-  align-items:center;
-  gap: 14px;
-  min-width: 0;
-}
-
-.busIcon{
-  width: 44px; height: 44px;
-  border-radius: 14px;
-  display:grid; place-items:center;
-
-  /* mais sutil */
-  background: rgba(255,255,255,.10);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
-  flex: 0 0 auto;
-}
-.busIcon .material-icons-outlined{ font-size: 24px; opacity: .95; }
-
-.titleBlock{ min-width:0; }
-
-/* Menos “gritado”, mais painel */
-.title{
-  font-size: clamp(18px, 2.2vw, 30px);
-  font-weight: 900;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.sub{
-  margin-top: 6px;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  opacity: .92;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  max-width: 70vw;
-}
-
-.h-right{
-  text-align:right;
-  white-space:nowrap;
-  display:flex;
-  flex-direction:column;
-  gap: 6px;
-  align-items:flex-end;
-}
-
-/* Hora grande (como no clima), mas sem “inflar” o cabeçalho */
-.clock{
-  font-size: clamp(34px, 4.1vw, 56px);
-  font-weight: 900;
-  letter-spacing: .06em;
-  line-height: 1;
-}
-
-.lastUpdate{
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  opacity: .92;
-}
-
-    /* Faixa topo do conteúdo (igual ao clima) */
+    /* Faixa topo do conteúdo */
     .panelTop{
       padding: 12px var(--pad);
       background: #f3f7ff;
@@ -224,7 +209,7 @@
       text-transform: uppercase;
     }
 
-    /* Área de conteúdo (lista/paginação) */
+    /* Conteúdo */
     .stage{
       position:relative;
       flex: 1;
@@ -234,7 +219,6 @@
       background: var(--panel);
     }
 
-    /* Animação troca de página */
     .page{
       position:absolute;
       inset: var(--pad);
@@ -257,7 +241,6 @@
       transition: opacity 520ms ease, transform 520ms ease;
     }
 
-    /* Cards (básico, claro, legível) */
     .card{
       position:relative;
       border-radius: 16px;
@@ -319,7 +302,7 @@
       min-width:0;
       display:flex;
       flex-direction:column;
-      gap: 8px;
+      gap: 6px;
     }
     .destName{
       font-size: clamp(24px, 2.4vw, 32px);
@@ -331,16 +314,6 @@
       overflow:hidden;
       text-overflow:ellipsis;
     }
-    .meta{
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--dim);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
 
     .timesCol{
       display:flex;
@@ -348,6 +321,7 @@
       align-items:flex-end;
       gap: 10px;
     }
+
     .next{
       width: 100%;
       max-width: 240px;
@@ -364,6 +338,7 @@
       color: var(--ok);
       line-height: 1.05;
     }
+    /* ✅ neutro: não induz "tá chegando" */
     .next .label{
       margin-top: 6px;
       font-size: 11px;
@@ -373,29 +348,41 @@
       color: rgba(31, 167, 101, .88);
     }
 
+    .miniLabel{
+      width:100%;
+      max-width:240px;
+      text-align:right;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #334155;
+      opacity: .78;
+      margin-top: -2px;
+    }
+
     .pills{
       width: 100%;
       max-width: 240px;
       display:flex;
       justify-content:flex-end;
       align-items:center;
-
-      /* ✅ garante UMA linha */
       flex-wrap: nowrap;
       overflow: hidden;
       gap: 8px;
     }
 
+    /* ✅ pílula "cluster" (pode virar 08:21–08:22, ou 08:24 • 08:28 • …) */
     .pill{
       padding: 8px 10px;
       border-radius: 999px;
       border: 1px solid var(--stroke2);
       background: #f1f5f9;
-      min-width: 78px;
+      min-width: 86px;
       text-align:center;
       font-size: 12px;
       font-weight: 900;
-      letter-spacing: .12em;
+      letter-spacing: .10em;
       color: #0b1220;
       white-space: nowrap;
       flex: 0 0 auto;
@@ -414,6 +401,27 @@
       text-align:center;
     }
 
+    /* ✅ Footer interno padrão painel (igual clima) */
+    .panelFooter{
+      padding: 10px var(--pad);
+      border-top: 1px solid var(--stroke2);
+      background: #f8fbff;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+    }
+    .footLeft, .footRight{
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #334155;
+      opacity: .86;
+      white-space:nowrap;
+    }
+
     /* Logo discreta no canto da TELA */
     .brand{
       position: fixed;
@@ -426,187 +434,89 @@
     }
     .brand img{ height: 22px; width:auto; display:block; }
 
-    /* ✅ Responsivo mantendo o MESMO layout (3 colunas) */
+    /* Responsivo mantendo o mesmo layout (3 colunas) */
     @media (max-width: 980px){
-      body{
-        overflow:hidden;
-        padding: 10px;
-      }
+      body{ padding: 10px; }
+      .panel{ width: 98vw; height: calc(100vh - 20px); }
 
-      .panel{
-        width: 98vw;
-        height: calc(100vh - 20px);
-      }
-
-      /* Cabeçalho */
-      .header{
-        padding: 14px var(--pad);
-        gap: 12px;
-      }
-      .busIcon{
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-      }
+      .header{ padding: 14px var(--pad); gap: 12px; }
+      .busIcon{ width: 40px; height: 40px; border-radius: 12px; }
       .busIcon .material-icons-outlined{ font-size: 22px; }
 
-      .title{
-        font-size: 22px;
-        letter-spacing: .06em;
-      }
-      .sub{
-        font-size: 11px;
-        letter-spacing: .10em;
-        max-width: 58vw;
-      }
+      .title{ font-size: 22px; }
+      .sub{ font-size: 11px; max-width: 58vw; }
 
-      .clock{
-        font-size: 42px;
-        letter-spacing: .05em;
-      }
-      .lastUpdate{
-        font-size: 11px;
-        letter-spacing: .10em;
-      }
+      .clock{ font-size: 42px; }
+      .lastUpdate{ font-size: 11px; }
 
-      /* Strip */
-      .panelTop{
-        padding: 10px var(--pad);
-      }
-      .panelInfo{
-        font-size: 11px;
-        letter-spacing: .10em;
-      }
-      .pager{
-        font-size: 11px;
-        letter-spacing: .10em;
-        gap: 10px;
-      }
+      .panelTop{ padding: 10px var(--pad); }
+      .panelInfo{ font-size: 11px; }
+      .pager{ font-size: 11px; gap: 10px; }
       .bar{ width: 170px; height: 9px; }
 
-      /* Conteúdo */
-      .stage{
-        padding: 12px;
-      }
-      .page{
-        inset: 12px;
-        gap: 10px;
-      }
+      .stage{ padding: 12px; }
+      .page{ inset: 12px; gap: 10px; }
 
-      /* Cards: mantém 3 colunas, só compacta */
       .card{
         min-height: 76px;
         padding: 12px 14px;
         gap: 12px;
-
         grid-template-columns: 96px 1fr 210px;
         border-radius: 14px;
       }
-
       .stripe{ width: 7px; }
-
-      .lineCol{
-        gap: 8px;
-        padding-left: 8px;
-      }
-      .lineNum{
-        font-size: 30px;
-      }
-      .company{
-        font-size: 11px;
-        padding: 5px 9px;
-        letter-spacing: .10em;
-      }
+      .lineCol{ gap: 8px; padding-left: 8px; }
+      .lineNum{ font-size: 30px; }
+      .company{ font-size: 11px; padding: 5px 9px; }
       .dot{ width: 9px; height: 9px; }
+      .destName{ font-size: 22px; }
 
-      .destCol{ gap: 6px; }
-      .destName{
-        font-size: 22px;
-        letter-spacing: .015em;
-      }
-      .meta{
-        font-size: 11px;
-        letter-spacing: .10em;
-      }
+      .next{ max-width: 200px; padding: 9px 10px; border-radius: 12px; }
+      .next .when{ font-size: 28px; }
+      .next .label{ font-size: 10px; margin-top: 5px; }
+      .miniLabel{ max-width: 200px; font-size: 10px; }
 
-      .timesCol{
-        gap: 8px;
-      }
+      .pills{ max-width: 200px; gap: 7px; }
+      .pill{ padding: 7px 9px; min-width: 78px; font-size: 11px; }
 
-      .next{
-        max-width: 200px;
-        padding: 9px 10px;
-        border-radius: 12px;
-      }
-      .next .when{
-        font-size: 28px;
-        letter-spacing: .05em;
-      }
-      .next .label{
-        font-size: 10px;
-        letter-spacing: .14em;
-        margin-top: 5px;
-      }
+      .panelFooter{ padding: 9px var(--pad); }
+      .footLeft,.footRight{ font-size: 10px; }
 
-      .pills{
-        max-width: 200px;
-        gap: 7px;
-      }
-      .pill{
-        padding: 7px 9px;
-        min-width: 66px;
-        font-size: 11px;
-        letter-spacing: .10em;
-      }
-
-      .brand{
-        bottom: 10px;
-        right: 12px;
-        opacity: .18;
-      }
+      .brand{ bottom: 10px; right: 12px; opacity: .18; }
       .brand img{ height: 18px; }
     }
 
-    /* ✅ Extra compacto (celulares / telas muito estreitas) */
     @media (max-width: 640px){
-      .header{
-        padding: 12px 12px;
-      }
       .title{ font-size: 18px; }
       .sub{ font-size: 10px; max-width: 54vw; }
       .clock{ font-size: 34px; }
 
-      .panelTop{
-        padding: 9px 12px;
-      }
       .bar{ width: 130px; height: 8px; }
-
-      .stage{ padding: 10px; }
-      .page{ inset: 10px; }
 
       .card{
         grid-template-columns: 86px 1fr 180px;
         padding: 11px 12px;
         min-height: 70px;
       }
-
       .lineNum{ font-size: 26px; }
       .company{ font-size: 10px; }
       .destName{ font-size: 18px; }
-      .meta{ font-size: 10px; }
 
       .next{ max-width: 170px; }
       .next .when{ font-size: 24px; }
+      .miniLabel{ max-width: 170px; }
 
       .pills{ max-width: 170px; }
-      .pill{ min-width: 60px; font-size: 10px; }
+      .pill{ min-width: 70px; font-size: 10px; }
+
+      .panelFooter{ padding: 8px 12px; }
+      .footLeft,.footRight{ font-size: 10px; }
     }
   </style>
 </head>
 
 <body>
   <section class="panel" aria-label="Painel de horários">
-    <!-- ✅ Cabeçalho integrado -->
     <div class="header">
       <div class="h-left">
         <div class="busIcon" aria-hidden="true">
@@ -624,7 +534,6 @@
       </div>
     </div>
 
-    <!-- Top strip (páginas + barra) -->
     <div class="panelTop">
       <div class="panelInfo">Próximas saídas (2h) • Next Bus</div>
       <div class="pager">
@@ -637,12 +546,13 @@
     <div class="stage" id="stage"></div>
   </section>
 
-  <!-- ✅ Logo discreta no canto da tela -->
   <div class="brand" aria-hidden="true">
     <img src="assets/logo.png" alt="">
   </div>
 
-  <!-- opcional: config.js  (window.PONTOVIEW_GMAPS_KEY = "SUA_CHAVE"; ) -->
+  <div class="pvFooter"></div>
+  <script src="../pv-footer.js"></script>
+
   <script src="config.js"></script>
 
   <script>
@@ -665,6 +575,9 @@
     const PAGE_PROGRESS_TICK_MS = 120;
     const MIN_ITEMS_PER_PAGE = 4;
 
+    // ✅ Agrupamento de horários muito próximos (minutos)
+    const CLUSTER_GAP_MIN = 2; // 08:21–08:22 vira range
+
     /*******************************************************************
      * UI refs
      *******************************************************************/
@@ -676,10 +589,11 @@
     const pageLabelEl = document.getElementById("pageLabel");
     const barFillEl = document.getElementById("barFill");
 
+    function pad2(n){ return String(n).padStart(2,"0"); }
+
     /*******************************************************************
      * Clock (sem segundos)
      *******************************************************************/
-    function pad2(n){ return String(n).padStart(2,"0"); }
     function tickClock(){
       const d = new Date();
       clockEl.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
@@ -759,7 +673,7 @@
     }
 
     /*******************************************************************
-     * Parsing Directions (robusto)
+     * Parsing Directions (SAÍDA somente)
      *******************************************************************/
     function toMillis(v){
       if (!v) return null;
@@ -787,17 +701,15 @@
           const lineShort = td.line?.short_name || td.line?.name || "—";
           const headsign = td.headsign || td.line?.name || td.arrival_stop?.name || "Destino";
 
+          // ✅ Apenas SAÍDA (departure_time)
           const depMs = toMillis(td.departure_time) || toMillis(td.departure_time?.value);
-          const arrMs = toMillis(td.arrival_time) || toMillis(td.arrival_time?.value);
-
-          const timeMs = arrMs || depMs;
-          if (!timeMs) continue;
+          if (!depMs) continue;
 
           trips.push({
             line: String(lineShort),
             destination: String(headsign),
-            timeMs,
-            key: `${String(lineShort)}|${String(headsign)}|${timeMs}`
+            timeMs: depMs,
+            key: `${String(lineShort)}|${String(headsign)}|${depMs}`
           });
         }
       }
@@ -845,6 +757,31 @@
     function fmtHHMM(ms){
       const d = new Date(ms);
       return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    }
+
+    function diffMin(aMs, bMs){
+      return Math.round(Math.abs(aMs - bMs) / 60000);
+    }
+
+    // ✅ transforma [08:21,08:22,08:24,09:28] em ["08:21–08:22","08:24","09:28"]
+    function clusterTimes(timesMs){
+      const t = (timesMs || []).slice().sort((a,b)=>a-b);
+      const clusters = [];
+      let current = [t[0]];
+      for (let i=1;i<t.length;i++){
+        if (diffMin(t[i], t[i-1]) <= CLUSTER_GAP_MIN){
+          current.push(t[i]);
+        }else{
+          clusters.push(current);
+          current = [t[i]];
+        }
+      }
+      if (current.length) clusters.push(current);
+
+      return clusters.map(c => {
+        if (c.length === 1) return fmtHHMM(c[0]);
+        return `${fmtHHMM(c[0])}–${fmtHHMM(c[c.length-1])}`;
+      });
     }
 
     /*******************************************************************
@@ -900,8 +837,14 @@
       stripe.style.background = company.code === "VSR" ? "var(--vsr)" : "var(--vjd)";
 
       const dotColor = company.code === "VSR" ? "var(--vsr)" : "var(--vjd)";
-      const pills = card.times.slice(1);
-      const pillsHtml = pills.map(t => `<div class="pill">${fmtHHMM(t)}</div>`).join("");
+
+      const next = fmtHHMM(card.times[0]);
+
+      // ✅ pílulas agora são "clusters" (ranges) e NÃO duplicam o horário de destaque
+      const rest = card.times.slice(1);
+      const pillTexts = clusterTimes(rest);
+
+      const pillsHtml = pillTexts.map(txt => `<div class="pill">${escapeHtml(txt)}</div>`).join("");
 
       el.innerHTML = `
         <div class="lineCol">
@@ -914,14 +857,15 @@
 
         <div class="destCol">
           <div class="destName">${escapeHtml(card.destination)}</div>
-          <div class="meta">Próximos 2h • ${card.times.map(fmtHHMM).slice(0,4).join(" • ")}</div>
         </div>
 
         <div class="timesCol">
           <div class="next">
-            <div class="when">${fmtHHMM(card.times[0])}</div>
-            <div class="label">Próximo</div>
+            <div class="when">${next}</div>
+            <div class="label">SAÍDA</div>
           </div>
+
+          <div class="miniLabel">Próximos horários</div>
           <div class="pills">${pillsHtml}</div>
         </div>
       `;
@@ -959,6 +903,78 @@
       return n;
     }
 
+    // ✅ ajusta automaticamente quantas pílulas cabem; se não couber nenhuma, compacta tudo em uma só
+    function fitPillsToWidth(cardEl){
+      const pillsEl = cardEl.querySelector(".pills");
+      if (!pillsEl) return;
+
+      let pills = Array.from(pillsEl.children);
+      if (!pills.length) return;
+
+      const maxW = pillsEl.clientWidth;
+      const gap = parseFloat(getComputedStyle(pillsEl).gap || "0") || 0;
+
+      pills.forEach(p => p.style.display = "");
+
+      let used = 0;
+      let count = 0;
+
+      for (let i = 0; i < pills.length; i++){
+        const w = pills[i].getBoundingClientRect().width;
+        const nextUsed = used + (count > 0 ? gap : 0) + w;
+
+        if (nextUsed <= maxW){
+          used = nextUsed;
+          count++;
+          continue;
+        }
+        break;
+      }
+
+      // Se não coube nenhuma (tela muito estreita), mostra só uma pílula compactada
+      if (count === 0){
+        const all = pills.map(p => p.textContent.trim()).filter(Boolean);
+        pillsEl.innerHTML = `<div class="pill"></div>`;
+        const one = pillsEl.querySelector(".pill");
+        one.textContent = compactTextToWidth(one, all.join(" • "));
+        return;
+      }
+
+      // Esconde as que não couberam
+      for (let i = count; i < pills.length; i++){
+        pills[i].style.display = "none";
+      }
+
+      // Se escondeu alguma, transforma a última visível em "…"
+      const hidden = pills.length - count;
+      if (hidden > 0 && count >= 1){
+        const last = pills[count - 1];
+        const base = last.textContent.trim();
+        last.textContent = compactTextToWidth(last, base + " • …");
+      }
+    }
+
+    // ✅ compacta string para caber dentro de uma pill (com reticências)
+    const __measureCanvas = document.createElement("canvas");
+    const __measureCtx = __measureCanvas.getContext("2d");
+
+    function compactTextToWidth(el, text){
+      const cs = getComputedStyle(el);
+      const font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      __measureCtx.font = font;
+
+      const maxW = Math.max(0, el.clientWidth - 18);
+      if (maxW <= 0) return "…";
+
+      if (__measureCtx.measureText(text).width <= maxW) return text;
+
+      let s = text;
+      while (s.length > 1 && __measureCtx.measureText(s + "…").width > maxW){
+        s = s.slice(0, -1);
+      }
+      return s + "…";
+    }
+
     function paginateCards(cards){
       stageEl.innerHTML = "";
       pages = [];
@@ -967,7 +983,7 @@
       if (!cards.length){
         const p = document.createElement("div");
         p.className = "page active";
-        p.innerHTML = `<div class="empty">Nenhum horário encontrado nas próximas 2 horas.</div>`;
+        p.innerHTML = `<div class="empty">Nenhuma saída encontrada nas próximas 2 horas.</div>`;
         stageEl.appendChild(p);
         pages = [p];
         setPagerLabel();
@@ -975,7 +991,6 @@
         return;
       }
 
-      // medição
       const sample = buildCardEl(cards[0]);
       const tmp = document.createElement("div");
       tmp.style.position = "absolute";
@@ -997,15 +1012,10 @@
         page.className = "page";
         for (const c of chunk){
           const cardEl = buildCardEl(c);
-
-          // no máximo 6 pílulas para manter leitura limpa
-          const pillsEl = cardEl.querySelector(".pills");
-          if (pillsEl){
-            const pills = Array.from(pillsEl.children);
-            if (pills.length > 6) pills.slice(6).forEach(x => x.remove());
-          }
-
           page.appendChild(cardEl);
+
+          // ✅ depois de entrar no DOM, ajusta pílulas conforme largura
+          requestAnimationFrame(() => fitPillsToWidth(cardEl));
         }
         stageEl.appendChild(page);
         pages.push(page);
@@ -1035,6 +1045,13 @@
       pageIndex = nextIndex;
       setPagerLabel();
       setProgress(0);
+
+      // ✅ garante ajuste ao trocar página
+      requestAnimationFrame(() => {
+        const active = pages[pageIndex];
+        if (!active) return;
+        active.querySelectorAll(".card").forEach(el => fitPillsToWidth(el));
+      });
     }
 
     function startPaging(){
@@ -1060,10 +1077,10 @@
     }
 
     /*******************************************************************
-     * Refresh API
+     * Refresh
      *******************************************************************/
     async function refreshData(){
-      setStatus("Buscando linhas (varredura 360º)…");
+      setStatus("Atualizando saídas…");
       const t0 = performance.now();
 
       if (!directionsService) directionsService = new google.maps.DirectionsService();
@@ -1088,7 +1105,9 @@
 
       const dt = Math.round(performance.now() - t0);
       const now = new Date();
-      lastUpdateEl.textContent = `Última atualização • ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+      const hhmm = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+
+      lastUpdateEl.textContent = `Última atualização • ${hhmm}`;
 
       if (!okCount){
         setStatus("Sem resposta da API (verifique a KEY e restrições).");
@@ -1112,7 +1131,6 @@
         setStatus("Carregando Google Maps…");
         await loadGoogleMaps();
         warnEl.style.display = "none";
-        setStatus("Atualizando linhas…");
         await refreshData();
         scheduleRefresh();
 
@@ -1125,4 +1143,3 @@
   </script>
 </body>
 </html>
-
