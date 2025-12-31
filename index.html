@@ -155,60 +155,12 @@
       flex-wrap:wrap;
     }
     .panelInfo{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.panelInfo .sep{
-  opacity:.55;
-  font-weight:900;
-}
-
-.agencyRow{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
-  min-width:0;
-}
-
-.agChip{
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--stroke2);
-  background: #ffffff;
-  box-shadow: 0 6px 16px rgba(2,10,23,.06);
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: #334155;
-  max-width: 240px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.agChip .dot{
-  width:8px; height:8px; border-radius:50%;
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,.7);
-  flex:0 0 auto;
-}
-
-.agMore{
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: #334155;
-  opacity:.75;
-}
-
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #1f2a44;
+    }
 
     .pager{
       display:flex;
@@ -515,11 +467,7 @@
     </div>
 
     <div class="panelTop">
-      <div class="panelInfo" id="panelInfo">
-  <span id="panelInfoBase">Próximas saídas (2h)</span>
-  <span class="sep">•</span>
-  <span class="agencyRow" id="agencyRow"></span>
-</div>
+      <div class="panelInfo" id="panelInfo">Próximas saídas (2h) • Next Bus</div>
       <div class="pager">
         <span id="pageLabel">PÁGINA 1/1</span>
         <div class="bar" aria-hidden="true"><div id="barFill"></div></div>
@@ -592,53 +540,6 @@
     const barFillEl = document.getElementById("barFill");
     const stationTitleEl = document.getElementById("stationTitle");
     const panelInfoEl = document.getElementById("panelInfo");
-    const panelInfoBaseEl = document.getElementById("panelInfoBase");
-const agencyRowEl = document.getElementById("agencyRow");
-
-function normalizeAgencyName(name){
-  return String(name || "").trim().replace(/\s+/g, " ");
-}
-
-function buildAgenciesSummary(cards){
-  const map = new Map(); // name -> color
-  for (const c of (cards || [])){
-    const name = normalizeAgencyName(c.agency);
-    if (!name) continue;
-    const color = (c.lineColor && String(c.lineColor).trim()) ? c.lineColor.trim() : "#0f3f82";
-    if (!map.has(name)) map.set(name, color);
-  }
-
-  const agencies = Array.from(map.entries()).map(([name,color]) => ({ name, color }));
-  // ordena por nome só pra ficar estável
-  agencies.sort((a,b)=>a.name.localeCompare(b.name, "pt-BR"));
-
-  return agencies;
-}
-
-function renderTopAgencies(cards){
-  if (!agencyRowEl) return;
-
-  const agencies = buildAgenciesSummary(cards);
-
-  // se não vier nada do Google, mostra "ÔNIBUS"
-  if (!agencies.length){
-    agencyRowEl.innerHTML = `<span class="agMore">ÔNIBUS</span>`;
-    return;
-  }
-
-  // mostra até 3 chips, depois +N
-  const maxShow = 3;
-  const show = agencies.slice(0, maxShow);
-  const remaining = agencies.length - show.length;
-
-  agencyRowEl.innerHTML = show.map(a => `
-    <span class="agChip" title="${escapeHtml(a.name)}">
-      <span class="dot" style="background:${escapeHtml(a.color)}"></span>
-      <span>${escapeHtml(a.name)}</span>
-    </span>
-  `).join("") + (remaining > 0 ? `<span class="agMore">+${remaining}</span>` : "");
-}
-
 
     function pad2(n){ return String(n).padStart(2,"0"); }
     function escapeHtml(s){
@@ -961,15 +862,12 @@ function renderTopAgencies(cards){
     let demoTimer = null;
     async function startDemoLoop(){
       stationTitleEl.textContent = String(PV_CONFIG.STATION_QUERY || DEFAULT_STATION_FALLBACK).toUpperCase();
-      panelInfoEl.textContent = `Próximas saídas (${PV_CONFIG.TIME_WINDOW_HOURS}h)`;
+      panelInfoEl.textContent = `Próximas saídas (${PV_CONFIG.TIME_WINDOW_HOURS}h) • Next Bus`;
       setStatus(`Modo demo • ${PV_CONFIG.DEMO_LINES_COUNT} linhas`);
 
       const render = async () => {
         currentCards = buildDemoCards();
         await paginateCards(currentCards);
-        renderTopAgencies(currentCards);
-
-
 
         const d = new Date();
         lastUpdateEl.textContent = `Última atualização • ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
@@ -1202,8 +1100,6 @@ function renderTopAgencies(cards){
       const cards = aggregateTrips(allTrips);
       currentCards = cards;
       await paginateCards(cards);
-      renderTopAgencies(currentCards);
-
 
       const dt = Math.round(performance.now() - t0);
       const now = new Date();
@@ -1231,10 +1127,7 @@ function renderTopAgencies(cards){
         if (PV_CONFIG.DEMO_MODE){
           warnEl.style.display = "none";
           await startDemoLoop();
-          window.addEventListener("resize", async () => {
-  await paginateCards(currentCards || []);
-  renderTopAgencies(currentCards || []);
-});
+          window.addEventListener("resize", async () => { await paginateCards(currentCards || []); });
           return;
         }
 
@@ -1258,10 +1151,7 @@ function renderTopAgencies(cards){
         await refreshData();
         scheduleRefresh();
 
-        window.addEventListener("resize", async () => {
-  await paginateCards(currentCards || []);
-  renderTopAgencies(currentCards || []);
-});
+        window.addEventListener("resize", async () => { await paginateCards(currentCards || []); });
       }catch(err){
         console.warn(err);
         warnEl.style.display = "block";
@@ -1273,6 +1163,3 @@ function renderTopAgencies(cards){
   </script>
 </body>
 </html>
-
-
-
