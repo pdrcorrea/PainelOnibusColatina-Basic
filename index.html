@@ -862,7 +862,7 @@
     let demoTimer = null;
     async function startDemoLoop(){
       stationTitleEl.textContent = String(PV_CONFIG.STATION_QUERY || DEFAULT_STATION_FALLBACK).toUpperCase();
-      panelInfoEl.textContent = `Próximas saídas (${PV_CONFIG.TIME_WINDOW_HOURS}h) • Next Bus`;
+      panelInfoEl.textContent = `Próximas saídas (${PV_CONFIG.TIME_WINDOW_HOURS}h)`;
       setStatus(`Modo demo • ${PV_CONFIG.DEMO_LINES_COUNT} linhas`);
 
       const render = async () => {
@@ -1108,7 +1108,7 @@
       if (!okCount){
         setStatus("Sem resposta da API (verifique a KEY e restrições).");
       } else {
-        setStatus(`Linhas: ${cards.length} • OK: ${okCount}/${PV_CONFIG.SWEEP_POINTS} • ${dt}ms`);
+        setStatus(`Linhas: ${cards.length}`);
       }
     }
 
@@ -1163,3 +1163,4 @@
   </script>
 </body>
 </html>
+
