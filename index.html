@@ -320,22 +320,39 @@
       flex-direction:column;
       align-items:flex-end;
       gap: 10px;
+      width: 100%;
     }
 
-    .next{
+    /* ====== ✅ NOVO: SAÍDA (mais discreto) + PRÓXIMOS AO LADO DIREITO ====== */
+    .timeRow{
       width: 100%;
       max-width: 240px;
+      display:flex;
+      align-items: stretch; /* mesma altura */
+      gap: 10px;
+    }
+
+    /* Badge principal (SAÍDA) mais discreto */
+    .next{
+      flex: 1 1 auto;
+      width: 100%;
+      max-width: none;
       text-align:center;
       padding: 10px 12px;
       border-radius: 14px;
-      background: rgba(31, 167, 101, .12);
-      border: 2px solid rgba(31, 167, 101, .25);
+      background: rgba(31, 167, 101, .08);
+      border: 1px solid rgba(31, 167, 101, .18);
+
+      display:flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
     }
     .next .when{
-      font-size: 36px;
+      font-size: 34px;
       font-weight: 900;
       letter-spacing: .06em;
-      color: #1fa765;
+      color: rgba(31, 167, 101, .92);
       line-height: 1.05;
     }
     .next .label{
@@ -344,37 +361,37 @@
       font-weight: 900;
       letter-spacing: .16em;
       text-transform: uppercase;
-      color: rgba(31, 167, 101, .88);
+      color: rgba(31, 167, 101, .72);
     }
 
-    /* ✅ Próximos horários em "badges" à direita, EMPILHADOS (um embaixo do outro) */
-    .whenRow{
+    /* Próximos horários ao lado direito, empilhados, máx 3 */
+    .nextSide{
+      flex: 0 0 auto;
+      width: 112px;
+      border-radius: 14px;
+      border: 1px solid var(--stroke2);
+      background: #f8fbff;
+      padding: 10px 10px;
       display:flex;
-      align-items: flex-start;
+      flex-direction: column;
       justify-content: center;
-      gap: 12px;
-    }
-    .nextBadges{
-      display:flex;
-      flex-direction: column; /* um embaixo do outro */
       gap: 6px;
-      align-items: flex-end;
-      padding-top: 2px;
     }
-    .nextBadge{
-      font-size: 12px;          /* mesmo tamanho das pílulas antigas */
+    .nextSideItem{
+      width: 100%;
+      text-align:center;
+      font-size: 12px;
       font-weight: 900;
       letter-spacing: .10em;
-      text-transform: uppercase;
-      padding: 6px 9px;
+      padding: 6px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(31, 167, 101, .22);
-      background: rgba(31, 167, 101, .10);
-      color: rgba(31, 167, 101, .92);
-      opacity: .78;             /* discreto */
-      line-height: 1;
+      border: 1px solid var(--stroke2);
+      background: #f1f5f9;
+      color: #0b1220;
       white-space: nowrap;
+      opacity: .92;
     }
+    /* ===================================================================== */
 
     .empty{
       padding: 22px 18px;
@@ -418,21 +435,23 @@
       .company{ max-width: 140px; font-size: 9px; padding: 4px 8px; }
       .dot{ width: 7px; height: 7px; }
       .destName{ font-size: 22px; }
-      .next{ max-width: 200px; padding: 9px 10px; border-radius: 12px; }
-      .next .when{ font-size: 28px; }
-      .next .label{ font-size: 10px; margin-top: 5px; }
 
-      .whenRow{ gap: 10px; }
-      .nextBadge{ font-size: 11px; padding: 6px 8px; }
+      .timeRow{ max-width: 200px; gap: 9px; }
+      .next{ padding: 9px 10px; border-radius: 12px; }
+      .next .when{ font-size: 27px; }
+      .next .label{ font-size: 10px; margin-top: 5px; }
+      .nextSide{ width: 96px; padding: 9px 9px; border-radius: 12px; }
+      .nextSideItem{ font-size: 11px; padding: 6px 7px; }
     }
 
     @media (max-width: 640px){
       .bar{ width: 130px; height: 8px; }
       .card{ grid-template-columns: 86px 1fr 180px; }
       .destName{ font-size: 18px; }
-      .next{ max-width: 170px; }
-      .whenRow{ gap: 9px; }
-      .nextBadge{ font-size: 10px; padding: 5px 7px; }
+
+      .timeRow{ max-width: 170px; gap: 8px; }
+      .nextSide{ width: 86px; }
+      .nextSideItem{ font-size: 10px; padding: 5px 6px; }
     }
   </style>
 </head>
@@ -595,6 +614,7 @@
       barFillEl.style.width = pct + "%";
     }
 
+    // ✅ CARD (SAÍDA + PRÓXIMOS AO LADO DIREITO, empilhados, máx 3)
     function buildCardEl(card){
       const el = document.createElement("div");
       el.className = "card";
@@ -605,21 +625,16 @@
       const next = fmtHHMM(card.times[0]);
       const rest = card.times.slice(1);
 
-      // Próximos horários agrupados
-      const nextBadges = clusterTimes(rest);
-      const hasNext = nextBadges.length > 0;
+      const nextTimes = clusterTimes(rest);
+      const hasNext = nextTimes.length > 0;
 
-      // Mostra até 3 badges para não “crescer” demais.
-      // Se tiver mais, coloca um último badge "+N"
-      const MAX_BADGES = 3;
-      const showBadges = nextBadges.slice(0, MAX_BADGES);
-      const remaining = Math.max(0, nextBadges.length - showBadges.length);
+      const MAX_NEXT = 3;
+      const show = nextTimes.slice(0, MAX_NEXT);
 
-      const badgesHtml = hasNext
+      const nextSideHtml = hasNext
         ? `
-          <div class="nextBadges" aria-label="Próximos horários">
-            ${showBadges.map(t => `<div class="nextBadge">${escapeHtml(t)}</div>`).join("")}
-            ${remaining > 0 ? `<div class="nextBadge">+${remaining}</div>` : ``}
+          <div class="nextSide" aria-label="Próximos horários">
+            ${show.map(t => `<div class="nextSideItem">${escapeHtml(t)}</div>`).join("")}
           </div>
         `
         : ``;
@@ -640,12 +655,12 @@
         </div>
 
         <div class="timesCol">
-          <div class="next">
-            <div class="whenRow">
+          <div class="timeRow">
+            <div class="next">
               <div class="when">${next}</div>
-              ${badgesHtml}
+              <div class="label">SAÍDA</div>
             </div>
-            <div class="label">SAÍDA</div>
+            ${nextSideHtml}
           </div>
         </div>
       `;
@@ -677,6 +692,7 @@
       let perPage = Math.floor((available + gap) / (cardH + gap));
       perPage = Math.max(1, Math.min(20, perPage));
 
+      // evita ficar “travado” por glitch de medição
       if (perPage === 1 && available > (cardH * 2.2)) perPage = 2;
       if (perPage === 2 && available > (cardH * 3.2)) perPage = 3;
 
@@ -707,8 +723,7 @@
         page.className = "page";
 
         for (const c of chunk){
-          const cardEl = buildCardEl(c);
-          page.appendChild(cardEl);
+          page.appendChild(buildCardEl(c));
         }
 
         stageEl.appendChild(page);
@@ -934,7 +949,6 @@
           const lineShort = td.line?.short_name || td.line?.name || "—";
           const headsign = td.headsign || td.line?.name || td.arrival_stop?.name || "Destino";
 
-          // ✅ só SAÍDA
           const depMs = toMillis(td.departure_time) || toMillis(td.departure_time?.value);
           if (!depMs) continue;
 
@@ -943,7 +957,7 @@
             td.line?.agencies?.[0]?.short_name ||
             "";
 
-          const lineColor = (td.line?.color || "").trim(); // pode vir "#RRGGBB"
+          const lineColor = (td.line?.color || "").trim();
 
           trips.push({
             line: String(lineShort),
@@ -1026,8 +1040,6 @@
 
     async function refreshData(){
       setStatus("Buscando linhas (varredura 360º)…");
-      const t0 = performance.now();
-
       if (!directionsService) directionsService = new google.maps.DirectionsService();
 
       const destinations = buildSweepDestinations(STATION_LATLNG);
@@ -1047,7 +1059,6 @@
       currentCards = cards;
       await paginateCards(cards);
 
-      const dt = Math.round(performance.now() - t0);
       const now = new Date();
       lastUpdateEl.textContent = `Última atualização • ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
 
