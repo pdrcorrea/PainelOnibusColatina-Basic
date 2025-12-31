@@ -347,43 +347,33 @@
       color: rgba(31, 167, 101, .88);
     }
 
-    .miniLabel{
-      width:100%;
-      max-width:240px;
-      text-align:right;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: #334155;
-      opacity: .78;
-      margin-top: -2px;
-    }
-
-    .pills{
-      width: 100%;
-      max-width: 240px;
+    /* ✅ Próximos horários em "badges" à direita, EMPILHADOS (um embaixo do outro) */
+    .whenRow{
       display:flex;
-      justify-content:flex-end;
-      align-items:center;
-      flex-wrap: nowrap;
-      overflow: hidden;
-      gap: 8px;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 12px;
     }
-
-    .pill{
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--stroke2);
-      background: #f1f5f9;
-      min-width: 86px;
-      text-align:center;
-      font-size: 12px;
+    .nextBadges{
+      display:flex;
+      flex-direction: column; /* um embaixo do outro */
+      gap: 6px;
+      align-items: flex-end;
+      padding-top: 2px;
+    }
+    .nextBadge{
+      font-size: 12px;          /* mesmo tamanho das pílulas antigas */
       font-weight: 900;
       letter-spacing: .10em;
-      color: #0b1220;
+      text-transform: uppercase;
+      padding: 6px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(31, 167, 101, .22);
+      background: rgba(31, 167, 101, .10);
+      color: rgba(31, 167, 101, .92);
+      opacity: .78;             /* discreto */
+      line-height: 1;
       white-space: nowrap;
-      flex: 0 0 auto;
     }
 
     .empty{
@@ -431,9 +421,9 @@
       .next{ max-width: 200px; padding: 9px 10px; border-radius: 12px; }
       .next .when{ font-size: 28px; }
       .next .label{ font-size: 10px; margin-top: 5px; }
-      .miniLabel{ max-width: 200px; font-size: 10px; }
-      .pills{ max-width: 200px; gap: 7px; }
-      .pill{ padding: 7px 9px; min-width: 78px; font-size: 11px; }
+
+      .whenRow{ gap: 10px; }
+      .nextBadge{ font-size: 11px; padding: 6px 8px; }
     }
 
     @media (max-width: 640px){
@@ -441,8 +431,8 @@
       .card{ grid-template-columns: 86px 1fr 180px; }
       .destName{ font-size: 18px; }
       .next{ max-width: 170px; }
-      .pills{ max-width: 170px; }
-      .pill{ min-width: 70px; font-size: 10px; }
+      .whenRow{ gap: 9px; }
+      .nextBadge{ font-size: 10px; padding: 5px 7px; }
     }
   </style>
 </head>
@@ -565,55 +555,6 @@
       setTimeout(() => { tickClock(); setInterval(tickClock, 1000); }, ms);
     }
 
-    // medir largura para cortar texto das pílulas (quando precisa “• …”)
-    const __measureCanvas = document.createElement("canvas");
-    const __measureCtx = __measureCanvas.getContext("2d");
-    function compactTextToWidth(el, text){
-      const cs = getComputedStyle(el);
-      __measureCtx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-      const maxW = Math.max(0, el.clientWidth - 18);
-      if (maxW <= 0) return "…";
-      if (__measureCtx.measureText(text).width <= maxW) return text;
-      let s = text;
-      while (s.length > 1 && __measureCtx.measureText(s + "…").width > maxW) s = s.slice(0, -1);
-      return s + "…";
-    }
-
-    function fitPillsToWidth(cardEl){
-      const pillsEl = cardEl.querySelector(".pills");
-      if (!pillsEl || getComputedStyle(pillsEl).display === "none") return;
-
-      const pills = Array.from(pillsEl.children);
-      if (!pills.length) return;
-
-      const maxW = pillsEl.clientWidth;
-      const gap = parseFloat(getComputedStyle(pillsEl).gap || "0") || 0;
-
-      pills.forEach(p => p.style.display = "");
-
-      let used = 0, count = 0;
-      for (let i=0;i<pills.length;i++){
-        const w = pills[i].getBoundingClientRect().width;
-        const nextUsed = used + (count ? gap : 0) + w;
-        if (nextUsed <= maxW){ used = nextUsed; count++; } else break;
-      }
-
-      if (count === 0){
-        const all = pills.map(p => p.textContent.trim()).filter(Boolean);
-        pillsEl.innerHTML = `<div class="pill"></div>`;
-        const one = pillsEl.querySelector(".pill");
-        one.textContent = compactTextToWidth(one, all.join(" • "));
-        return;
-      }
-
-      for (let i=count;i<pills.length;i++) pills[i].style.display = "none";
-      const hidden = pills.length - count;
-      if (hidden > 0){
-        const last = pills[count-1];
-        last.textContent = compactTextToWidth(last, last.textContent.trim() + " • …");
-      }
-    }
-
     function clusterTimes(timesMs){
       const t = (timesMs || []).slice().sort((a,b)=>a-b);
       if (!t.length) return [];
@@ -664,9 +605,24 @@
       const next = fmtHHMM(card.times[0]);
       const rest = card.times.slice(1);
 
-      const pillTexts = clusterTimes(rest);
-      const hasNext = pillTexts.length > 0;
-      const pillsHtml = pillTexts.map(txt => `<div class="pill">${escapeHtml(txt)}</div>`).join("");
+      // Próximos horários agrupados
+      const nextBadges = clusterTimes(rest);
+      const hasNext = nextBadges.length > 0;
+
+      // Mostra até 3 badges para não “crescer” demais.
+      // Se tiver mais, coloca um último badge "+N"
+      const MAX_BADGES = 3;
+      const showBadges = nextBadges.slice(0, MAX_BADGES);
+      const remaining = Math.max(0, nextBadges.length - showBadges.length);
+
+      const badgesHtml = hasNext
+        ? `
+          <div class="nextBadges" aria-label="Próximos horários">
+            ${showBadges.map(t => `<div class="nextBadge">${escapeHtml(t)}</div>`).join("")}
+            ${remaining > 0 ? `<div class="nextBadge">+${remaining}</div>` : ``}
+          </div>
+        `
+        : ``;
 
       const agencyLabel = (card.agency || "").trim() || "ÔNIBUS";
 
@@ -685,12 +641,12 @@
 
         <div class="timesCol">
           <div class="next">
-            <div class="when">${next}</div>
+            <div class="whenRow">
+              <div class="when">${next}</div>
+              ${badgesHtml}
+            </div>
             <div class="label">SAÍDA</div>
           </div>
-
-          <div class="miniLabel" style="${hasNext ? "" : "display:none"}">Próximos horários</div>
-          <div class="pills" style="${hasNext ? "" : "display:none"}">${pillsHtml}</div>
         </div>
       `;
 
@@ -721,7 +677,6 @@
       let perPage = Math.floor((available + gap) / (cardH + gap));
       perPage = Math.max(1, Math.min(20, perPage));
 
-      // garante que não fique “travado” em 1/2 por glitch de medição
       if (perPage === 1 && available > (cardH * 2.2)) perPage = 2;
       if (perPage === 2 && available > (cardH * 3.2)) perPage = 3;
 
@@ -754,7 +709,6 @@
         for (const c of chunk){
           const cardEl = buildCardEl(c);
           page.appendChild(cardEl);
-          requestAnimationFrame(() => fitPillsToWidth(cardEl));
         }
 
         stageEl.appendChild(page);
@@ -785,12 +739,6 @@
       pageIndex = nextIndex;
       setPagerLabel();
       setProgress(0);
-
-      requestAnimationFrame(() => {
-        const active = pages[pageIndex];
-        if (!active) return;
-        active.querySelectorAll(".card").forEach(el => fitPillsToWidth(el));
-      });
     }
 
     function startPaging(){
@@ -1161,5 +1109,3 @@
   </script>
 </body>
 </html>
-
-
