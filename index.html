@@ -22,24 +22,38 @@
       --stroke:#d8e1ee;
       --stroke2:#e6edf7;
 
-      --shadow: 0 18px 60px rgba(2,10,23,.18);
+      --shadow:0 12px 36px rgba(0,0,0,.28);
 
       --ok:#1fa765;
       --okSoft: rgba(31, 167, 101, .12);
 
-      --r: 18px;
-      --pad: clamp(14px, 2.0vw, 22px);
+      /* padrão PontoView (igual clima) */
+      --r:22px;
+      --pad: clamp(16px, 1.4vw, 26px);
+      --gap: clamp(14px, 1.2vw, 20px);
+      --safe: clamp(16px, 2.2vw, 32px);
 
-      --bar: #1c5aa6;
-      --bar2: #34c6d0;
+      --topA:#0b2a44;
+      --topB:#2c6aa3;
+      --topC:#0f3d63;
 
-      --header: linear-gradient(180deg, #2f6f9d 0%, #184c75 55%, #0f3b5e 100%);
+      --anim: 420ms;
+      --ease: cubic-bezier(.2,.8,.2,1);
+
+      /* Tipos (iguais ao clima) */
+      --t-title: clamp(20px, 1.55vw, 34px);
+      --t-sub:   clamp(12px, 0.95vw, 16px);
+      --t-clock: clamp(34px, 3.05vw, 64px);
+
+      /* Footer */
+      --footerH: clamp(46px, 5.4vh, 72px);
 
       --stageGap: 12px;
     }
 
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
+
     body{
       margin:0;
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -50,15 +64,19 @@
         radial-gradient(1200px 900px at 25% 10%, rgba(87,184,231,.22) 0%, rgba(10,46,62,0) 60%),
         radial-gradient(900px 700px at 75% 80%, rgba(52,198,208,.14) 0%, rgba(6,18,24,0) 65%),
         radial-gradient(1400px 1100px at 50% 55%, var(--bg1) 0%, var(--bg0) 62%, #040a0f 100%);
+    }
 
-      padding: clamp(12px, 2vw, 22px);
-      display:grid;
-      place-items:center;
+    /* FULLSCREEN COM SAFE PADDING */
+    .frame{
+      width:100vw;
+      height:100vh;
+      padding: var(--safe);
+      display:flex;
     }
 
     .panel{
-      width: min(1500px, 96vw);
-      height: calc(100vh - clamp(24px, 4vw, 44px));
+      width:100%;
+      height:100%;
       border-radius: var(--r);
       background: var(--panel);
       box-shadow: var(--shadow);
@@ -70,50 +88,86 @@
       transform: translateY(12px);
       animation: inPanel 900ms cubic-bezier(.22,1,.36,1) forwards;
       position:relative;
+      min-height:0;
     }
     @keyframes inPanel{ to{ opacity:1; transform: translateY(0);} }
 
+    /* ===== HEADER (mesmo comportamento do clima) ===== */
     .header{
-      padding: 14px var(--pad);
-      background: var(--header);
+      position:relative;
+      background: linear-gradient(180deg, var(--topB) 0%, var(--topC) 42%, var(--topA) 100%);
       color:#fff;
+      padding: calc(var(--pad) * 1.05);
       display:flex;
+      justify-content:space-between; /* extremidades */
       align-items:center;
-      justify-content:space-between;
-      gap: 14px;
+      gap: var(--gap);
+      flex:0 0 auto;
+      min-width:0;
+      border-bottom: 1px solid rgba(255,255,255,.12);
       box-shadow: inset 0 -1px 0 rgba(255,255,255,.18);
     }
+
+    .header::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(900px 120px at 50% 0%, rgba(255,255,255,.22), rgba(255,255,255,0) 65%),
+        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,0) 42%);
+      opacity:.95;
+    }
+
+    .header::after{
+      content:"";
+      position:absolute;
+      inset:10px;
+      border-radius: calc(var(--r) - 10px);
+      border: 1px solid rgba(255,255,255,.10);
+      pointer-events:none;
+      opacity:.45;
+    }
+
+    .h-left, .h-right{ position:relative; z-index:1; }
+
     .h-left{
       display:flex;
       align-items:center;
-      gap: 14px;
-      min-width: 0;
+      gap: var(--gap);
+      min-width:0;
+      flex:1 1 auto; /* permite o relógio ir pra borda */
     }
+
     .busIcon{
-      width: 44px; height: 44px;
-      border-radius: 14px;
-      display:grid; place-items:center;
+      width: clamp(46px,3.4vw,64px);
+      height: clamp(46px,3.4vw,64px);
+      border-radius: 16px;
+      display:grid;
+      place-items:center;
       background: rgba(255,255,255,.10);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
+      border:1px solid rgba(255,255,255,.22);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
       flex: 0 0 auto;
     }
     .busIcon .material-icons-outlined{ font-size: 24px; opacity: .95; }
 
     .titleBlock{ min-width:0; }
     .title{
-      font-size: clamp(18px, 2.2vw, 30px);
+      font-size: var(--t-title);
       font-weight: 900;
-      letter-spacing: .06em;
+      letter-spacing: .04em;
       text-transform: uppercase;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
+      margin:0;
     }
     .sub{
       margin-top: 6px;
-      font-size: 12px;
+      font-size: var(--t-sub);
       font-weight: 800;
-      letter-spacing: .14em;
+      letter-spacing: .12em;
       text-transform: uppercase;
       opacity: .92;
       white-space:nowrap;
@@ -124,28 +178,31 @@
 
     .h-right{
       text-align:right;
-      white-space:nowrap;
       display:flex;
       flex-direction:column;
-      gap: 6px;
-      align-items:flex-end;
+      gap:6px;
+      align-items:flex-end;     /* igual clima */
+      min-width:max-content;    /* não encolhe */
+      white-space:nowrap;
+      margin-left:auto;         /* garante encostar na direita */
     }
     .clock{
-      font-size: clamp(34px, 4.1vw, 56px);
+      font-size: var(--t-clock);
       font-weight: 900;
-      letter-spacing: .06em;
+      letter-spacing: .02em;
       line-height: 1;
     }
     .lastUpdate{
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: .14em;
+      font-size: var(--t-sub);
+      font-weight: 800;
+      letter-spacing: .12em;
       text-transform: uppercase;
       opacity: .92;
     }
 
+    /* Subbar */
     .panelTop{
-      padding: 12px var(--pad);
+      padding: calc(var(--pad) * .62) var(--pad);
       background: #f3f7ff;
       border-bottom: 1px solid var(--stroke2);
       display:flex;
@@ -153,6 +210,8 @@
       justify-content:space-between;
       gap: 12px;
       flex-wrap:wrap;
+      flex:0 0 auto;
+      min-width:0;
     }
     .panelInfo{
       font-size: 12px;
@@ -160,6 +219,10 @@
       letter-spacing: .12em;
       text-transform: uppercase;
       color: #1f2a44;
+      min-width:0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     .pager{
@@ -171,6 +234,7 @@
       font-weight: 900;
       letter-spacing: .12em;
       text-transform: uppercase;
+      white-space:nowrap;
     }
     .bar{
       width: 240px;
@@ -183,7 +247,7 @@
     .bar > div{
       height:100%;
       width:0%;
-      background: linear-gradient(90deg, var(--bar), var(--bar2));
+      background: linear-gradient(90deg, #1c5aa6, #34c6d0);
       border-radius: 999px;
       transition: width 120ms linear;
     }
@@ -204,7 +268,7 @@
 
     .stage{
       position:relative;
-      flex: 1;
+      flex: 1 1 auto;
       min-height:0;
       padding: var(--pad);
       overflow:hidden;
@@ -323,26 +387,23 @@
       width: 100%;
     }
 
-    /* ====== ✅ NOVO: SAÍDA (mais discreto) + PRÓXIMOS AO LADO DIREITO ====== */
+    /* SAÍDA + PRÓXIMOS AO LADO DIREITO */
     .timeRow{
       width: 100%;
       max-width: 240px;
       display:flex;
-      align-items: stretch; /* mesma altura */
+      align-items: stretch;
       gap: 10px;
     }
 
-    /* Badge principal (SAÍDA) mais discreto */
     .next{
       flex: 1 1 auto;
       width: 100%;
-      max-width: none;
       text-align:center;
       padding: 10px 12px;
       border-radius: 14px;
       background: rgba(31, 167, 101, .08);
       border: 1px solid rgba(31, 167, 101, .18);
-
       display:flex;
       flex-direction: column;
       justify-content: center;
@@ -364,7 +425,6 @@
       color: rgba(31, 167, 101, .72);
     }
 
-    /* Próximos horários ao lado direito, empilhados, máx 3 */
     .nextSide{
       flex: 0 0 auto;
       width: 112px;
@@ -391,7 +451,6 @@
       white-space: nowrap;
       opacity: .92;
     }
-    /* ===================================================================== */
 
     .empty{
       padding: 22px 18px;
@@ -406,24 +465,32 @@
       text-align:center;
     }
 
-    .panelFooter{
-      border-top: 1px solid var(--stroke2);
-      background: #fff;
-      padding: 10px var(--pad);
+    /* Footer padrão */
+    .pvFooter{
+      flex:0 0 auto;
+      height: var(--footerH);
       display:flex;
       align-items:center;
       justify-content:flex-end;
-      min-height: 44px;
+      padding: 10px 16px;
+      border-top:1px solid var(--stroke2);
+      background: transparent;
+      gap: 12px;
+    }
+    .pvFooterBrand{display:flex; align-items:center; gap:10px; opacity:.88;}
+    .pvFooterBrand img{height: clamp(16px, 2.4vh, 22px); width:auto; display:block;}
+    .pvFooterBrand .pvSmall{
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing:.12em;
+      text-transform: uppercase;
+      color:#3b4b62;
+      white-space:nowrap;
     }
 
     @media (max-width: 980px){
-      body{ padding: 10px; }
-      .panel{ width: 98vw; height: calc(100vh - 20px); }
-      .title{ font-size: 22px; }
-      .sub{ font-size: 11px; max-width: 58vw; }
-      .clock{ font-size: 42px; }
-      .lastUpdate{ font-size: 11px; }
       .bar{ width: 170px; height: 9px; }
+
       .card{
         min-height: 74px;
         padding: 12px 14px;
@@ -457,666 +524,668 @@
 </head>
 
 <body>
-  <section class="panel" aria-label="Painel de horários">
-    <div class="header">
-      <div class="h-left">
-        <div class="busIcon" aria-hidden="true">
-          <span class="material-icons-outlined">directions_bus</span>
-        </div>
-        <div class="titleBlock">
-          <div class="title" id="stationTitle">Estação</div>
-          <div class="sub" id="subStatus">Carregando…</div>
-        </div>
-      </div>
-
-      <div class="h-right">
-        <div class="clock" id="clock">--:--</div>
-        <div class="lastUpdate" id="lastUpdate">Última atualização • —</div>
-      </div>
-    </div>
-
-    <div class="panelTop">
-      <div class="panelInfo" id="panelInfo">Próximas saídas (2h) • Next Bus</div>
-      <div class="pager">
-        <span id="pageLabel">PÁGINA 1/1</span>
-        <div class="bar" aria-hidden="true"><div id="barFill"></div></div>
-      </div>
-    </div>
-
-    <div class="warn" id="warn"></div>
-    <div class="stage" id="stage"></div>
-
-    <div class="panelFooter">
-      <div class="pvFooter"></div>
-    </div>
-    <script src="../pv-footer.js"></script>
-  </section>
-
-  <!-- opcional: config.js (window.PONTOVIEW_GMAPS_KEY = "SUA_CHAVE"; ) -->
-  <script src="config.js"></script>
-
-  <script>
-    /*******************************************************************
-     * PAINEL DE CONFIGURAÇÃO POR URL (1 campo só)
-     *  - ?station=Centro,%20São%20Mateus%20-%20ES,%2029930-500
-     *  - ?demo=1&station=Centro,%20São%20Mateus
-     *******************************************************************/
-    const DEFAULT_STATION_FALLBACK = "Centro da Cidade";
-
-    function getQuery(){
-      const q = new URLSearchParams(location.search);
-      const station = (q.get("station") || "").trim();
-      const demo = (q.get("demo") || "").trim();
-      return {
-        station: station || null,
-        demo: demo === "1" || demo.toLowerCase() === "true" || demo.toLowerCase() === "demo"
-      };
-    }
-    const Q = getQuery();
-
-    const PV_CONFIG = {
-      DEMO_MODE: Q.demo,
-      STATION_QUERY: Q.station || "Av. Ângelo Giuberti, 291 - Esplanada, Colatina - ES, 29702-060",
-
-      TIME_WINDOW_HOURS: 2,
-      SWEEP_POINTS: 12,
-      SWEEP_RADIUS_M: 1200,
-      REFRESH_EVERY_MS: 10 * 60 * 1000,
-      PAST_TOLERANCE_MS: 20_000,
-      CLUSTER_GAP_MIN: 2,
-
-      DEMO_LINES_COUNT: 18,
-      DEMO_REFRESH_SEC: 25,
-      DEMO_HEADSIGN_POOL: ["COHAB","AROEIRA","SANTA TEREZA","CENTRO","BAIRRO INDUSTRIAL","RIVIERA","AYRTON SENNA"],
-      DEMO_AGENCIES: [
-        { name:"VIAÇÃO SÃO GABRIEL", color:"#f3c316" },
-        { name:"VIAÇÃO JOANA DARC", color:"#0f3f82" },
-        { name:"VIAÇÃO SÃO ROQUE", color:"#5fc2ff" },
-        { name:"TRANS COLATINA", color:"#ff7a00" }
-      ]
-    };
-
-    const GOOGLE_MAPS_API_KEY = (window.PONTOVIEW_GMAPS_KEY || "").trim() || "COLE_SUA_API_KEY_AQUI";
-
-    const clockEl = document.getElementById("clock");
-    const lastUpdateEl = document.getElementById("lastUpdate");
-    const subStatusEl = document.getElementById("subStatus");
-    const warnEl = document.getElementById("warn");
-    const stageEl = document.getElementById("stage");
-    const pageLabelEl = document.getElementById("pageLabel");
-    const barFillEl = document.getElementById("barFill");
-    const stationTitleEl = document.getElementById("stationTitle");
-    const panelInfoEl = document.getElementById("panelInfo");
-
-    function pad2(n){ return String(n).padStart(2,"0"); }
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, (m) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-      }[m]));
-    }
-    function fmtHHMM(ms){
-      if (!Number.isFinite(ms)) return "--:--";
-      const d = new Date(ms);
-      return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
-    }
-    function diffMin(aMs, bMs){
-      return Math.round(Math.abs(aMs - bMs) / 60000);
-    }
-    function setStatus(text){ subStatusEl.textContent = text; }
-
-    function tickClock(){
-      const d = new Date();
-      clockEl.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
-    }
-    function startClock(){
-      tickClock();
-      const ms = 1000 - new Date().getMilliseconds();
-      setTimeout(() => { tickClock(); setInterval(tickClock, 1000); }, ms);
-    }
-
-    function clusterTimes(timesMs){
-      const t = (timesMs || []).slice().sort((a,b)=>a-b);
-      if (!t.length) return [];
-      const clusters = [];
-      let cur = [t[0]];
-      for (let i=1;i<t.length;i++){
-        if (diffMin(t[i], t[i-1]) <= PV_CONFIG.CLUSTER_GAP_MIN) cur.push(t[i]);
-        else { clusters.push(cur); cur=[t[i]]; }
-      }
-      clusters.push(cur);
-      return clusters.map(c => c.length === 1 ? fmtHHMM(c[0]) : `${fmtHHMM(c[0])}–${fmtHHMM(c[c.length-1])}`);
-    }
-
-    // paginação
-    let currentCards = [];
-    let pages = [];
-    let pageIndex = 0;
-
-    let pageTimer = null;
-    let progressTimer = null;
-    let pageStart = 0;
-
-    const PAGE_DURATION_MS = 12000;
-    const PAGE_PROGRESS_TICK_MS = 120;
-
-    function clearTimers(){
-      if (pageTimer) clearTimeout(pageTimer);
-      if (progressTimer) clearInterval(progressTimer);
-      pageTimer = null;
-      progressTimer = null;
-    }
-    function setPagerLabel(){
-      const total = Math.max(1, pages.length);
-      pageLabelEl.textContent = `PÁGINA ${Math.min(pageIndex+1, total)}/${total}`;
-    }
-    function setProgress(p){
-      const pct = Math.max(0, Math.min(100, p));
-      barFillEl.style.width = pct + "%";
-    }
-
-    // ✅ CARD (SAÍDA + PRÓXIMOS AO LADO DIREITO, empilhados, máx 3)
-    function buildCardEl(card){
-      const el = document.createElement("div");
-      el.className = "card";
-
-      const stripeColor = (card.lineColor || "").trim() || "#0f3f82";
-      const dotColor = stripeColor;
-
-      const next = fmtHHMM(card.times[0]);
-      const rest = card.times.slice(1);
-
-      const nextTimes = clusterTimes(rest);
-      const hasNext = nextTimes.length > 0;
-
-      const MAX_NEXT = 3;
-      const show = nextTimes.slice(0, MAX_NEXT);
-
-      const nextSideHtml = hasNext
-        ? `
-          <div class="nextSide" aria-label="Próximos horários">
-            ${show.map(t => `<div class="nextSideItem">${escapeHtml(t)}</div>`).join("")}
+  <div class="frame">
+    <section class="panel" aria-label="Painel de horários">
+      <div class="header">
+        <div class="h-left">
+          <div class="busIcon" aria-hidden="true">
+            <span class="material-icons-outlined">directions_bus</span>
           </div>
-        `
-        : ``;
-
-      const agencyLabel = (card.agency || "").trim() || "ÔNIBUS";
-
-      el.innerHTML = `
-        <div class="lineCol">
-          <div class="lineNum">${escapeHtml(card.line)}</div>
-          <div class="company" title="${escapeHtml(agencyLabel)}">
-            <span class="dot" style="background:${escapeHtml(dotColor)}"></span>
-            <span>${escapeHtml(agencyLabel)}</span>
+          <div class="titleBlock">
+            <div class="title" id="stationTitle">Estação</div>
+            <div class="sub" id="subStatus">Carregando…</div>
           </div>
         </div>
 
-        <div class="destCol">
-          <div class="destName">${escapeHtml(card.destination)}</div>
+        <div class="h-right">
+          <div class="clock" id="clock">--:--</div>
+          <div class="lastUpdate" id="lastUpdate">Última atualização • —</div>
         </div>
+      </div>
 
-        <div class="timesCol">
-          <div class="timeRow">
-            <div class="next">
-              <div class="when">${next}</div>
-              <div class="label">SAÍDA</div>
+      <div class="panelTop">
+        <div class="panelInfo" id="panelInfo">Próximas saídas (2h) • Next Bus</div>
+        <div class="pager">
+          <span id="pageLabel">PÁGINA 1/1</span>
+          <div class="bar" aria-hidden="true"><div id="barFill"></div></div>
+        </div>
+      </div>
+
+      <div class="warn" id="warn"></div>
+      <div class="stage" id="stage"></div>
+
+      <footer class="pvFooter" aria-label="PontoView">
+        <div class="pvFooterBrand">
+          <span class="pvSmall">PontoView</span>
+          <img src="./assets/logo-pontoview.png" alt="Logo PontoView" />
+        </div>
+      </footer>
+
+      <!-- opcional: config.js (window.PONTOVIEW_GMAPS_KEY = "SUA_CHAVE"; ) -->
+      <script src="config.js"></script>
+
+      <script>
+        /*******************************************************************
+         * PAINEL DE CONFIGURAÇÃO POR URL (1 campo só)
+         *  - ?station=Centro,%20São%20Mateus%20-%20ES,%2029930-500
+         *  - ?demo=1&station=Centro,%20São%20Mateus
+         *******************************************************************/
+        const DEFAULT_STATION_FALLBACK = "Centro da Cidade";
+
+        function getQuery(){
+          const q = new URLSearchParams(location.search);
+          const station = (q.get("station") || "").trim();
+          const demo = (q.get("demo") || "").trim();
+          return {
+            station: station || null,
+            demo: demo === "1" || demo.toLowerCase() === "true" || demo.toLowerCase() === "demo"
+          };
+        }
+        const Q = getQuery();
+
+        const PV_CONFIG = {
+          DEMO_MODE: Q.demo,
+          STATION_QUERY: Q.station || "Av. Ângelo Giuberti, 291 - Esplanada, Colatina - ES, 29702-060",
+
+          TIME_WINDOW_HOURS: 2,
+          SWEEP_POINTS: 12,
+          SWEEP_RADIUS_M: 1200,
+          REFRESH_EVERY_MS: 10 * 60 * 1000,
+          PAST_TOLERANCE_MS: 20_000,
+          CLUSTER_GAP_MIN: 2,
+
+          DEMO_LINES_COUNT: 18,
+          DEMO_REFRESH_SEC: 25,
+          DEMO_HEADSIGN_POOL: ["COHAB","AROEIRA","SANTA TEREZA","CENTRO","BAIRRO INDUSTRIAL","RIVIERA","AYRTON SENNA"],
+          DEMO_AGENCIES: [
+            { name:"VIAÇÃO SÃO GABRIEL", color:"#f3c316" },
+            { name:"VIAÇÃO JOANA DARC", color:"#0f3f82" },
+            { name:"VIAÇÃO SÃO ROQUE", color:"#5fc2ff" },
+            { name:"TRANS COLATINA", color:"#ff7a00" }
+          ]
+        };
+
+        const GOOGLE_MAPS_API_KEY = (window.PONTOVIEW_GMAPS_KEY || "").trim() || "COLE_SUA_API_KEY_AQUI";
+
+        const clockEl = document.getElementById("clock");
+        const lastUpdateEl = document.getElementById("lastUpdate");
+        const subStatusEl = document.getElementById("subStatus");
+        const warnEl = document.getElementById("warn");
+        const stageEl = document.getElementById("stage");
+        const pageLabelEl = document.getElementById("pageLabel");
+        const barFillEl = document.getElementById("barFill");
+        const stationTitleEl = document.getElementById("stationTitle");
+        const panelInfoEl = document.getElementById("panelInfo");
+
+        function pad2(n){ return String(n).padStart(2,"0"); }
+        function escapeHtml(s){
+          return String(s).replace(/[&<>"']/g, (m) => ({
+            "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+          }[m]));
+        }
+        function fmtHHMM(ms){
+          if (!Number.isFinite(ms)) return "--:--";
+          const d = new Date(ms);
+          return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+        }
+        function diffMin(aMs, bMs){
+          return Math.round(Math.abs(aMs - bMs) / 60000);
+        }
+        function setStatus(text){ subStatusEl.textContent = text; }
+
+        function tickClock(){
+          const d = new Date();
+          clockEl.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+        }
+        function startClock(){
+          tickClock();
+          const ms = 1000 - new Date().getMilliseconds();
+          setTimeout(() => { tickClock(); setInterval(tickClock, 1000); }, ms);
+        }
+
+        function clusterTimes(timesMs){
+          const t = (timesMs || []).slice().sort((a,b)=>a-b);
+          if (!t.length) return [];
+          const clusters = [];
+          let cur = [t[0]];
+          for (let i=1;i<t.length;i++){
+            if (diffMin(t[i], t[i-1]) <= PV_CONFIG.CLUSTER_GAP_MIN) cur.push(t[i]);
+            else { clusters.push(cur); cur=[t[i]]; }
+          }
+          clusters.push(cur);
+          return clusters.map(c => c.length === 1 ? fmtHHMM(c[0]) : `${fmtHHMM(c[0])}–${fmtHHMM(c[c.length-1])}`);
+        }
+
+        // paginação
+        let currentCards = [];
+        let pages = [];
+        let pageIndex = 0;
+
+        let pageTimer = null;
+        let progressTimer = null;
+        let pageStart = 0;
+
+        const PAGE_DURATION_MS = 12000;
+        const PAGE_PROGRESS_TICK_MS = 120;
+
+        function clearTimers(){
+          if (pageTimer) clearTimeout(pageTimer);
+          if (progressTimer) clearInterval(progressTimer);
+          pageTimer = null;
+          progressTimer = null;
+        }
+        function setPagerLabel(){
+          const total = Math.max(1, pages.length);
+          pageLabelEl.textContent = `PÁGINA ${Math.min(pageIndex+1, total)}/${total}`;
+        }
+        function setProgress(p){
+          const pct = Math.max(0, Math.min(100, p));
+          barFillEl.style.width = pct + "%";
+        }
+
+        function buildCardEl(card){
+          const el = document.createElement("div");
+          el.className = "card";
+
+          const stripeColor = (card.lineColor || "").trim() || "#0f3f82";
+          const dotColor = stripeColor;
+
+          const next = fmtHHMM(card.times[0]);
+          const rest = card.times.slice(1);
+
+          const nextTimes = clusterTimes(rest);
+          const hasNext = nextTimes.length > 0;
+
+          const MAX_NEXT = 3;
+          const show = nextTimes.slice(0, MAX_NEXT);
+
+          const nextSideHtml = hasNext
+            ? `
+              <div class="nextSide" aria-label="Próximos horários">
+                ${show.map(t => `<div class="nextSideItem">${escapeHtml(t)}</div>`).join("")}
+              </div>
+            `
+            : ``;
+
+          const agencyLabel = (card.agency || "").trim() || "ÔNIBUS";
+
+          el.innerHTML = `
+            <div class="lineCol">
+              <div class="lineNum">${escapeHtml(card.line)}</div>
+              <div class="company" title="${escapeHtml(agencyLabel)}">
+                <span class="dot" style="background:${escapeHtml(dotColor)}"></span>
+                <span>${escapeHtml(agencyLabel)}</span>
+              </div>
             </div>
-            ${nextSideHtml}
-          </div>
-        </div>
-      `;
 
-      const stripe = document.createElement("div");
-      stripe.className = "stripe";
-      stripe.style.background = stripeColor;
-      el.prepend(stripe);
+            <div class="destCol">
+              <div class="destName">${escapeHtml(card.destination)}</div>
+            </div>
 
-      return el;
-    }
+            <div class="timesCol">
+              <div class="timeRow">
+                <div class="next">
+                  <div class="when">${next}</div>
+                  <div class="label">SAÍDA</div>
+                </div>
+                ${nextSideHtml}
+              </div>
+            </div>
+          `;
 
-    async function computePerPage(cards){
-      stageEl.innerHTML = "";
-      const sample = buildCardEl(cards[0]);
-      stageEl.appendChild(sample);
+          const stripe = document.createElement("div");
+          stripe.className = "stripe";
+          stripe.style.background = stripeColor;
+          el.prepend(stripe);
 
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-      const cs = getComputedStyle(stageEl);
-      const padY = (parseFloat(cs.paddingTop)||0) + (parseFloat(cs.paddingBottom)||0);
-      const available = Math.max(0, stageEl.clientHeight - padY);
-
-      const cardH = sample.getBoundingClientRect().height || 90;
-      const gap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--stageGap")) || 12;
-
-      stageEl.innerHTML = "";
-
-      let perPage = Math.floor((available + gap) / (cardH + gap));
-      perPage = Math.max(1, Math.min(20, perPage));
-
-      // evita ficar “travado” por glitch de medição
-      if (perPage === 1 && available > (cardH * 2.2)) perPage = 2;
-      if (perPage === 2 && available > (cardH * 3.2)) perPage = 3;
-
-      return Math.max(2, perPage);
-    }
-
-    async function paginateCards(cards){
-      stageEl.innerHTML = "";
-      pages = [];
-      pageIndex = 0;
-
-      if (!cards.length){
-        const p = document.createElement("div");
-        p.className = "page active";
-        p.innerHTML = `<div class="empty">Nenhuma saída encontrada nas próximas ${PV_CONFIG.TIME_WINDOW_HOURS} horas.</div>`;
-        stageEl.appendChild(p);
-        pages = [p];
-        setPagerLabel();
-        setProgress(100);
-        return;
-      }
-
-      const perPage = await computePerPage(cards);
-
-      for (let i=0; i<cards.length; i += perPage){
-        const chunk = cards.slice(i, i+perPage);
-        const page = document.createElement("div");
-        page.className = "page";
-
-        for (const c of chunk){
-          page.appendChild(buildCardEl(c));
+          return el;
         }
 
-        stageEl.appendChild(page);
-        pages.push(page);
-      }
+        async function computePerPage(cards){
+          stageEl.innerHTML = "";
+          const sample = buildCardEl(cards[0]);
+          stageEl.appendChild(sample);
 
-      pages[0].classList.add("active");
-      setPagerLabel();
-      startPaging();
-    }
+          await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-    function showPage(nextIndex){
-      if (!pages.length) return;
+          const cs = getComputedStyle(stageEl);
+          const padY = (parseFloat(cs.paddingTop)||0) + (parseFloat(cs.paddingBottom)||0);
+          const available = Math.max(0, stageEl.clientHeight - padY);
 
-      const from = pages[pageIndex];
-      const to = pages[nextIndex];
-      if (from === to) return;
+          const cardH = sample.getBoundingClientRect().height || 90;
+          const gap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--stageGap")) || 12;
 
-      from.classList.remove("active");
-      from.classList.add("exit");
+          stageEl.innerHTML = "";
 
-      to.classList.remove("exit");
-      void to.offsetWidth;
-      to.classList.add("active");
+          let perPage = Math.floor((available + gap) / (cardH + gap));
+          perPage = Math.max(1, Math.min(20, perPage));
 
-      setTimeout(() => from.classList.remove("exit"), 560);
+          if (perPage === 1 && available > (cardH * 2.2)) perPage = 2;
+          if (perPage === 2 && available > (cardH * 3.2)) perPage = 3;
 
-      pageIndex = nextIndex;
-      setPagerLabel();
-      setProgress(0);
-    }
-
-    function startPaging(){
-      clearTimers();
-      if (pages.length <= 1){
-        setProgress(100);
-        return;
-      }
-
-      pageStart = Date.now();
-      setProgress(0);
-
-      progressTimer = setInterval(() => {
-        const elapsed = Date.now() - pageStart;
-        setProgress((elapsed / PAGE_DURATION_MS) * 100);
-      }, PAGE_PROGRESS_TICK_MS);
-
-      pageTimer = setTimeout(() => {
-        const next = (pageIndex + 1) % pages.length;
-        showPage(next);
-        startPaging();
-      }, PAGE_DURATION_MS);
-    }
-
-    // DEMO
-    function randInt(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
-    function pick(arr){ return arr[randInt(0, arr.length - 1)]; }
-
-    function buildDemoCards(){
-      const now = Date.now();
-      const end = now + PV_CONFIG.TIME_WINDOW_HOURS * 60 * 60 * 1000;
-
-      const lines = new Set();
-      while (lines.size < PV_CONFIG.DEMO_LINES_COUNT){
-        const base = Math.random() < 0.30 ? randInt(300, 499) : randInt(1, 199);
-        lines.add(String(base));
-      }
-
-      const cards = [];
-      for (const line of lines){
-        const dest = pick(PV_CONFIG.DEMO_HEADSIGN_POOL);
-        const agency = pick(PV_CONFIG.DEMO_AGENCIES);
-
-        const times = [];
-        let t = now + randInt(2, 18) * 60 * 1000;
-        while (t <= end){
-          times.push(t);
-          t += randInt(6, 36) * 60 * 1000;
-        }
-        times.sort((a,b)=>a-b);
-        if (Math.random() < 0.20) times.splice(1);
-
-        cards.push({
-          line,
-          destination: dest,
-          times,
-          nextTime: times[0],
-          agency: agency.name,
-          lineColor: agency.color
-        });
-      }
-
-      cards.sort((a,b)=>a.nextTime - b.nextTime);
-      return cards;
-    }
-
-    let demoTimer = null;
-    async function startDemoLoop(){
-      stationTitleEl.textContent = String(PV_CONFIG.STATION_QUERY || DEFAULT_STATION_FALLBACK).toUpperCase();
-      panelInfoEl.textContent = `Próximas saídas (${PV_CONFIG.TIME_WINDOW_HOURS}h)`;
-      setStatus(`Modo demo • ${PV_CONFIG.DEMO_LINES_COUNT} linhas`);
-
-      const render = async () => {
-        currentCards = buildDemoCards();
-        await paginateCards(currentCards);
-
-        const d = new Date();
-        lastUpdateEl.textContent = `Última atualização • ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
-      };
-
-      await render();
-      if (demoTimer) clearInterval(demoTimer);
-      demoTimer = setInterval(render, PV_CONFIG.DEMO_REFRESH_SEC * 1000);
-    }
-
-    // ONLINE
-    function loadGoogleMaps(){
-      return new Promise((resolve, reject) => {
-        if (window.google?.maps) return resolve();
-
-        const key = (GOOGLE_MAPS_API_KEY || "").trim();
-        if (!key || key === "COLE_SUA_API_KEY_AQUI"){
-          warnEl.style.display = "block";
-          warnEl.textContent = "INSIRA SUA GOOGLE MAPS API KEY (config.js OU CONSTANTE GOOGLE_MAPS_API_KEY).";
-          return reject(new Error("Missing API key"));
+          return Math.max(2, perPage);
         }
 
-        const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}`;
-        script.async = true;
-        script.defer = true;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error("Falha ao carregar Google Maps JS API"));
-        document.head.appendChild(script);
-      });
-    }
+        async function paginateCards(cards){
+          stageEl.innerHTML = "";
+          pages = [];
+          pageIndex = 0;
 
-    function geocodeStation(query){
-      return new Promise((resolve, reject) => {
-        const geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ address: query }, (results, status) => {
-          if (status === "OK" && results && results[0]) resolve(results[0]);
-          else reject(new Error("Geocoding falhou: " + status));
-        });
-      });
-    }
+          if (!cards.length){
+            const p = document.createElement("div");
+            p.className = "page active";
+            p.innerHTML = `<div class="empty">Nenhuma saída encontrada nas próximas ${PV_CONFIG.TIME_WINDOW_HOURS} horas.</div>`;
+            stageEl.appendChild(p);
+            pages = [p];
+            setPagerLabel();
+            setProgress(100);
+            return;
+          }
 
-    function buildTitleFromGeocode(geo){
-      const ac = geo?.address_components || [];
-      const pickType = (type) => {
-        const found = ac.find(c => (c.types || []).includes(type));
-        return found ? (found.long_name || found.short_name || "") : "";
-      };
+          const perPage = await computePerPage(cards);
 
-      const neighborhood =
-        pickType("neighborhood") || pickType("sublocality_level_1") || pickType("sublocality") || "";
+          for (let i=0; i<cards.length; i += perPage){
+            const chunk = cards.slice(i, i+perPage);
+            const page = document.createElement("div");
+            page.className = "page";
 
-      const city = pickType("locality") || pickType("administrative_area_level_2") || "";
-      const state = (ac.find(c => (c.types || []).includes("administrative_area_level_1"))?.short_name) || "";
+            for (const c of chunk){
+              page.appendChild(buildCardEl(c));
+            }
 
-      if (!neighborhood && city) return `Centro, ${city}`;
-      if (neighborhood && city && state) return `${neighborhood}, ${city} - ${state}`;
-      if (neighborhood && city) return `${neighborhood}, ${city}`;
-      if (city && state) return `${city} - ${state}`;
-      if (city) return city;
+            stageEl.appendChild(page);
+            pages.push(page);
+          }
 
-      return DEFAULT_STATION_FALLBACK;
-    }
+          pages[0].classList.add("active");
+          setPagerLabel();
+          startPaging();
+        }
 
-    function toRad(deg){ return deg * Math.PI / 180; }
-    function toDeg(rad){ return rad * 180 / Math.PI; }
-    function destinationPoint(lat, lng, bearingDeg, distanceM){
-      const R = 6371000;
-      const brng = toRad(bearingDeg);
-      const dDivR = distanceM / R;
-      const lat1 = toRad(lat);
-      const lon1 = toRad(lng);
+        function showPage(nextIndex){
+          if (!pages.length) return;
 
-      const lat2 = Math.asin(
-        Math.sin(lat1)*Math.cos(dDivR) +
-        Math.cos(lat1)*Math.sin(dDivR)*Math.cos(brng)
-      );
-      const lon2 = lon1 + Math.atan2(
-        Math.sin(brng)*Math.sin(dDivR)*Math.cos(lat1),
-        Math.cos(dDivR) - Math.sin(lat1)*Math.sin(lat2)
-      );
+          const from = pages[pageIndex];
+          const to = pages[nextIndex];
+          if (from === to) return;
 
-      return { lat: toDeg(lat2), lng: toDeg(lon2) };
-    }
+          from.classList.remove("active");
+          from.classList.add("exit");
 
-    function buildSweepDestinations(stationLatLng){
-      const points = [];
-      for (let i=0;i<PV_CONFIG.SWEEP_POINTS;i++){
-        const bearing = i * (360 / PV_CONFIG.SWEEP_POINTS);
-        points.push(destinationPoint(stationLatLng.lat, stationLatLng.lng, bearing, PV_CONFIG.SWEEP_RADIUS_M));
-      }
-      return points;
-    }
+          to.classList.remove("exit");
+          void to.offsetWidth;
+          to.classList.add("active");
 
-    function toMillis(v){
-      if (!v) return null;
-      if (v instanceof Date) return v.getTime();
-      if (typeof v === "number"){
-        if (v > 1e12) return v;
-        if (v > 1e9)  return v*1000;
-      }
-      if (typeof v === "object" && v.value) return toMillis(v.value);
-      return null;
-    }
+          setTimeout(() => from.classList.remove("exit"), 560);
 
-    function extractTripsFromDirectionsResult(result){
-      const trips = [];
-      if (!result?.routes?.length) return trips;
+          pageIndex = nextIndex;
+          setPagerLabel();
+          setProgress(0);
+        }
 
-      for (const route of result.routes){
-        const leg = route.legs?.[0];
-        if (!leg?.steps?.length) continue;
+        function startPaging(){
+          clearTimers();
+          if (pages.length <= 1){
+            setProgress(100);
+            return;
+          }
 
-        for (const step of leg.steps){
-          if (step.travel_mode !== "TRANSIT" || !step.transit) continue;
+          pageStart = Date.now();
+          setProgress(0);
 
-          const td = step.transit;
-          const lineShort = td.line?.short_name || td.line?.name || "—";
-          const headsign = td.headsign || td.line?.name || td.arrival_stop?.name || "Destino";
+          progressTimer = setInterval(() => {
+            const elapsed = Date.now() - pageStart;
+            setProgress((elapsed / PAGE_DURATION_MS) * 100);
+          }, PAGE_PROGRESS_TICK_MS);
 
-          const depMs = toMillis(td.departure_time) || toMillis(td.departure_time?.value);
-          if (!depMs) continue;
+          pageTimer = setTimeout(() => {
+            const next = (pageIndex + 1) % pages.length;
+            showPage(next);
+            startPaging();
+          }, PAGE_DURATION_MS);
+        }
 
-          const agencyName =
-            td.line?.agencies?.[0]?.name ||
-            td.line?.agencies?.[0]?.short_name ||
-            "";
+        // DEMO
+        function randInt(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function pick(arr){ return arr[randInt(0, arr.length - 1)]; }
 
-          const lineColor = (td.line?.color || "").trim();
+        function buildDemoCards(){
+          const now = Date.now();
+          const end = now + PV_CONFIG.TIME_WINDOW_HOURS * 60 * 60 * 1000;
 
-          trips.push({
-            line: String(lineShort),
-            destination: String(headsign),
-            timeMs: depMs,
-            agency: String(agencyName || "").trim(),
-            lineColor,
-            key: `${String(lineShort)}|${String(headsign)}|${depMs}|${String(agencyName||"")}|${String(lineColor||"")}`
+          const lines = new Set();
+          while (lines.size < PV_CONFIG.DEMO_LINES_COUNT){
+            const base = Math.random() < 0.30 ? randInt(300, 499) : randInt(1, 199);
+            lines.add(String(base));
+          }
+
+          const cards = [];
+          for (const line of lines){
+            const dest = pick(PV_CONFIG.DEMO_HEADSIGN_POOL);
+            const agency = pick(PV_CONFIG.DEMO_AGENCIES);
+
+            const times = [];
+            let t = now + randInt(2, 18) * 60 * 1000;
+            while (t <= end){
+              times.push(t);
+              t += randInt(6, 36) * 60 * 1000;
+            }
+            times.sort((a,b)=>a-b);
+            if (Math.random() < 0.20) times.splice(1);
+
+            cards.push({
+              line,
+              destination: dest,
+              times,
+              nextTime: times[0],
+              agency: agency.name,
+              lineColor: agency.color
+            });
+          }
+
+          cards.sort((a,b)=>a.nextTime - b.nextTime);
+          return cards;
+        }
+
+        let demoTimer = null;
+        async function startDemoLoop(){
+          stationTitleEl.textContent = String(PV_CONFIG.STATION_QUERY || DEFAULT_STATION_FALLBACK).toUpperCase();
+          panelInfoEl.textContent = `Próximas saídas (${PV_CONFIG.TIME_WINDOW_HOURS}h)`;
+          setStatus(`Modo demo • ${PV_CONFIG.DEMO_LINES_COUNT} linhas`);
+
+          const render = async () => {
+            currentCards = buildDemoCards();
+            await paginateCards(currentCards);
+
+            const d = new Date();
+            lastUpdateEl.textContent = `Última atualização • ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+          };
+
+          await render();
+          if (demoTimer) clearInterval(demoTimer);
+          demoTimer = setInterval(render, PV_CONFIG.DEMO_REFRESH_SEC * 1000);
+        }
+
+        // ONLINE
+        function loadGoogleMaps(){
+          return new Promise((resolve, reject) => {
+            if (window.google?.maps) return resolve();
+
+            const key = (GOOGLE_MAPS_API_KEY || "").trim();
+            if (!key || key === "COLE_SUA_API_KEY_AQUI"){
+              warnEl.style.display = "block";
+              warnEl.textContent = "INSIRA SUA GOOGLE MAPS API KEY (config.js OU CONSTANTE GOOGLE_MAPS_API_KEY).";
+              return reject(new Error("Missing API key"));
+            }
+
+            const script = document.createElement("script");
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}`;
+            script.async = true;
+            script.defer = true;
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error("Falha ao carregar Google Maps JS API"));
+            document.head.appendChild(script);
           });
         }
-      }
-      return trips;
-    }
 
-    function aggregateTrips(allTrips){
-      const uniqMap = new Map();
-      for (const t of allTrips) uniqMap.set(t.key, t);
-      const uniq = Array.from(uniqMap.values());
-
-      const now = Date.now();
-      const end = now + PV_CONFIG.TIME_WINDOW_HOURS * 60 * 60 * 1000;
-
-      const groups = new Map();
-      for (const t of uniq){
-        if (t.timeMs < now - PV_CONFIG.PAST_TOLERANCE_MS) continue;
-        if (t.timeMs > end) continue;
-
-        const gKey = `${t.line}||${t.destination}||${t.agency||""}||${t.lineColor||""}`;
-        if (!groups.has(gKey)){
-          groups.set(gKey, {
-            line: t.line,
-            destination: t.destination,
-            times: [],
-            agency: t.agency || "",
-            lineColor: t.lineColor || ""
+        function geocodeStation(query){
+          return new Promise((resolve, reject) => {
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ address: query }, (results, status) => {
+              if (status === "OK" && results && results[0]) resolve(results[0]);
+              else reject(new Error("Geocoding falhou: " + status));
+            });
           });
         }
-        groups.get(gKey).times.push(t.timeMs);
-      }
 
-      const cards = [];
-      for (const g of groups.values()){
-        g.times.sort((a,b)=>a-b);
-        if (!g.times.length) continue;
+        function buildTitleFromGeocode(geo){
+          const ac = geo?.address_components || [];
+          const pickType = (type) => {
+            const found = ac.find(c => (c.types || []).includes(type));
+            return found ? (found.long_name || found.short_name || "") : "";
+          };
 
-        cards.push({
-          line: g.line,
-          destination: g.destination,
-          times: g.times,
-          nextTime: g.times[0],
-          agency: g.agency,
-          lineColor: g.lineColor
-        });
-      }
+          const neighborhood =
+            pickType("neighborhood") || pickType("sublocality_level_1") || pickType("sublocality") || "";
 
-      cards.sort((a,b)=>a.nextTime - b.nextTime);
-      return cards;
-    }
+          const city = pickType("locality") || pickType("administrative_area_level_2") || "";
+          const state = (ac.find(c => (c.types || []).includes("administrative_area_level_1"))?.short_name) || "";
 
-    let directionsService = null;
-    let refreshTimer = null;
-    let STATION_LATLNG = null;
+          if (!neighborhood && city) return `Centro, ${city}`;
+          if (neighborhood && city && state) return `${neighborhood}, ${city} - ${state}`;
+          if (neighborhood && city) return `${neighborhood}, ${city}`;
+          if (city && state) return `${city} - ${state}`;
+          if (city) return city;
 
-    function requestDirectionsTo(dest){
-      return new Promise((resolve) => {
-        const req = {
-          origin: STATION_LATLNG,
-          destination: dest,
-          travelMode: google.maps.TravelMode.TRANSIT,
-          provideRouteAlternatives: true,
-          transitOptions: { departureTime: new Date() }
-        };
-
-        directionsService.route(req, (result, status) => {
-          if (status === "OK" && result) resolve({ ok:true, result });
-          else resolve({ ok:false, status });
-        });
-      });
-    }
-
-    async function refreshData(){
-      setStatus("Buscando linhas (varredura 360º)…");
-      if (!directionsService) directionsService = new google.maps.DirectionsService();
-
-      const destinations = buildSweepDestinations(STATION_LATLNG);
-      const responses = await Promise.all(destinations.map(d => requestDirectionsTo(d)));
-
-      const allTrips = [];
-      let okCount = 0;
-
-      for (const r of responses){
-        if (r.ok){
-          okCount++;
-          allTrips.push(...extractTripsFromDirectionsResult(r.result));
-        }
-      }
-
-      const cards = aggregateTrips(allTrips);
-      currentCards = cards;
-      await paginateCards(cards);
-
-      const now = new Date();
-      lastUpdateEl.textContent = `Última atualização • ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
-
-      if (!okCount){
-        setStatus("Sem resposta da API (verifique a KEY e restrições).");
-      } else {
-        setStatus(`Linhas: ${cards.length}`);
-      }
-    }
-
-    function scheduleRefresh(){
-      if (refreshTimer) clearInterval(refreshTimer);
-      refreshTimer = setInterval(refreshData, PV_CONFIG.REFRESH_EVERY_MS);
-    }
-
-    // BOOT
-    startClock();
-
-    (async function boot(){
-      try{
-        panelInfoEl.textContent = `Próximas saídas (${PV_CONFIG.TIME_WINDOW_HOURS}h) • Next Bus`;
-
-        if (PV_CONFIG.DEMO_MODE){
-          warnEl.style.display = "none";
-          await startDemoLoop();
-          window.addEventListener("resize", async () => { await paginateCards(currentCards || []); });
-          return;
+          return DEFAULT_STATION_FALLBACK;
         }
 
-        setStatus("Carregando Google Maps…");
-        await loadGoogleMaps();
+        function toRad(deg){ return deg * Math.PI / 180; }
+        function toDeg(rad){ return rad * 180 / Math.PI; }
+        function destinationPoint(lat, lng, bearingDeg, distanceM){
+          const R = 6371000;
+          const brng = toRad(bearingDeg);
+          const dDivR = distanceM / R;
+          const lat1 = toRad(lat);
+          const lon1 = toRad(lng);
 
-        warnEl.style.display = "none";
+          const lat2 = Math.asin(
+            Math.sin(lat1)*Math.cos(dDivR) +
+            Math.cos(lat1)*Math.sin(dDivR)*Math.cos(brng)
+          );
+          const lon2 = lon1 + Math.atan2(
+            Math.sin(brng)*Math.sin(dDivR)*Math.cos(lat1),
+            Math.cos(dDivR) - Math.sin(lat1)*Math.sin(lat2)
+          );
 
-        setStatus("Localizando ponto…");
-        const geo = await geocodeStation(PV_CONFIG.STATION_QUERY);
+          return { lat: toDeg(lat2), lng: toDeg(lon2) };
+        }
 
-        STATION_LATLNG = {
-          lat: geo.geometry.location.lat(),
-          lng: geo.geometry.location.lng()
-        };
+        function buildSweepDestinations(stationLatLng){
+          const points = [];
+          for (let i=0;i<PV_CONFIG.SWEEP_POINTS;i++){
+            const bearing = i * (360 / PV_CONFIG.SWEEP_POINTS);
+            points.push(destinationPoint(stationLatLng.lat, stationLatLng.lng, bearing, PV_CONFIG.SWEEP_RADIUS_M));
+          }
+          return points;
+        }
 
-        const title = buildTitleFromGeocode(geo);
-        stationTitleEl.textContent = String(title || DEFAULT_STATION_FALLBACK).toUpperCase();
+        function toMillis(v){
+          if (!v) return null;
+          if (v instanceof Date) return v.getTime();
+          if (typeof v === "number"){
+            if (v > 1e12) return v;
+            if (v > 1e9)  return v*1000;
+          }
+          if (typeof v === "object" && v.value) return toMillis(v.value);
+          return null;
+        }
 
-        setStatus("Atualizando linhas…");
-        await refreshData();
-        scheduleRefresh();
+        function extractTripsFromDirectionsResult(result){
+          const trips = [];
+          if (!result?.routes?.length) return trips;
 
-        window.addEventListener("resize", async () => { await paginateCards(currentCards || []); });
-      }catch(err){
-        console.warn(err);
-        warnEl.style.display = "block";
-        warnEl.textContent = "ERRO AO INICIAR. VERIFIQUE INTERNET, API KEY E O TEXTO DO ?station=...";
-        stationTitleEl.textContent = DEFAULT_STATION_FALLBACK.toUpperCase();
-        setStatus("Aguardando configuração…");
-      }
-    })();
-  </script>
+          for (const route of result.routes){
+            const leg = route.legs?.[0];
+            if (!leg?.steps?.length) continue;
+
+            for (const step of leg.steps){
+              if (step.travel_mode !== "TRANSIT" || !step.transit) continue;
+
+              const td = step.transit;
+              const lineShort = td.line?.short_name || td.line?.name || "—";
+              const headsign = td.headsign || td.line?.name || td.arrival_stop?.name || "Destino";
+
+              const depMs = toMillis(td.departure_time) || toMillis(td.departure_time?.value);
+              if (!depMs) continue;
+
+              const agencyName =
+                td.line?.agencies?.[0]?.name ||
+                td.line?.agencies?.[0]?.short_name ||
+                "";
+
+              const lineColor = (td.line?.color || "").trim();
+
+              trips.push({
+                line: String(lineShort),
+                destination: String(headsign),
+                timeMs: depMs,
+                agency: String(agencyName || "").trim(),
+                lineColor,
+                key: `${String(lineShort)}|${String(headsign)}|${depMs}|${String(agencyName||"")}|${String(lineColor||"")}`
+              });
+            }
+          }
+          return trips;
+        }
+
+        function aggregateTrips(allTrips){
+          const uniqMap = new Map();
+          for (const t of allTrips) uniqMap.set(t.key, t);
+          const uniq = Array.from(uniqMap.values());
+
+          const now = Date.now();
+          const end = now + PV_CONFIG.TIME_WINDOW_HOURS * 60 * 60 * 1000;
+
+          const groups = new Map();
+          for (const t of uniq){
+            if (t.timeMs < now - PV_CONFIG.PAST_TOLERANCE_MS) continue;
+            if (t.timeMs > end) continue;
+
+            const gKey = `${t.line}||${t.destination}||${t.agency||""}||${t.lineColor||""}`;
+            if (!groups.has(gKey)){
+              groups.set(gKey, {
+                line: t.line,
+                destination: t.destination,
+                times: [],
+                agency: t.agency || "",
+                lineColor: t.lineColor || ""
+              });
+            }
+            groups.get(gKey).times.push(t.timeMs);
+          }
+
+          const cards = [];
+          for (const g of groups.values()){
+            g.times.sort((a,b)=>a-b);
+            if (!g.times.length) continue;
+
+            cards.push({
+              line: g.line,
+              destination: g.destination,
+              times: g.times,
+              nextTime: g.times[0],
+              agency: g.agency,
+              lineColor: g.lineColor
+            });
+          }
+
+          cards.sort((a,b)=>a.nextTime - b.nextTime);
+          return cards;
+        }
+
+        let directionsService = null;
+        let refreshTimer = null;
+        let STATION_LATLNG = null;
+
+        function requestDirectionsTo(dest){
+          return new Promise((resolve) => {
+            const req = {
+              origin: STATION_LATLNG,
+              destination: dest,
+              travelMode: google.maps.TravelMode.TRANSIT,
+              provideRouteAlternatives: true,
+              transitOptions: { departureTime: new Date() }
+            };
+
+            directionsService.route(req, (result, status) => {
+              if (status === "OK" && result) resolve({ ok:true, result });
+              else resolve({ ok:false, status });
+            });
+          });
+        }
+
+        async function refreshData(){
+          setStatus("Buscando linhas (varredura 360º)…");
+          if (!directionsService) directionsService = new google.maps.DirectionsService();
+
+          const destinations = buildSweepDestinations(STATION_LATLNG);
+          const responses = await Promise.all(destinations.map(d => requestDirectionsTo(d)));
+
+          const allTrips = [];
+          let okCount = 0;
+
+          for (const r of responses){
+            if (r.ok){
+              okCount++;
+              allTrips.push(...extractTripsFromDirectionsResult(r.result));
+            }
+          }
+
+          const cards = aggregateTrips(allTrips);
+          currentCards = cards;
+          await paginateCards(cards);
+
+          const now = new Date();
+          lastUpdateEl.textContent = `Última atualização • ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+
+          if (!okCount){
+            setStatus("Sem resposta da API (verifique a KEY e restrições).");
+          } else {
+            setStatus(`Linhas: ${cards.length}`);
+          }
+        }
+
+        function scheduleRefresh(){
+          if (refreshTimer) clearInterval(refreshTimer);
+          refreshTimer = setInterval(refreshData, PV_CONFIG.REFRESH_EVERY_MS);
+        }
+
+        // BOOT
+        startClock();
+
+        (async function boot(){
+          try{
+            panelInfoEl.textContent = `Próximas saídas (${PV_CONFIG.TIME_WINDOW_HOURS}h) • Next Bus`;
+
+            if (PV_CONFIG.DEMO_MODE){
+              warnEl.style.display = "none";
+              await startDemoLoop();
+              window.addEventListener("resize", async () => { await paginateCards(currentCards || []); });
+              return;
+            }
+
+            setStatus("Carregando Google Maps…");
+            await loadGoogleMaps();
+
+            warnEl.style.display = "none";
+
+            setStatus("Localizando ponto…");
+            const geo = await geocodeStation(PV_CONFIG.STATION_QUERY);
+
+            STATION_LATLNG = {
+              lat: geo.geometry.location.lat(),
+              lng: geo.geometry.location.lng()
+            };
+
+            const title = buildTitleFromGeocode(geo);
+            stationTitleEl.textContent = String(title || DEFAULT_STATION_FALLBACK).toUpperCase();
+
+            setStatus("Atualizando linhas…");
+            await refreshData();
+            scheduleRefresh();
+
+            window.addEventListener("resize", async () => { await paginateCards(currentCards || []); });
+          }catch(err){
+            console.warn(err);
+            warnEl.style.display = "block";
+            warnEl.textContent = "ERRO AO INICIAR. VERIFIQUE INTERNET, API KEY E O TEXTO DO ?station=...";
+            stationTitleEl.textContent = DEFAULT_STATION_FALLBACK.toUpperCase();
+            setStatus("Aguardando configuração…");
+          }
+        })();
+      </script>
+    </section>
+  </div>
 </body>
 </html>
