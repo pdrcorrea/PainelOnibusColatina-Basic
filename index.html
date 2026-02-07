@@ -7,20 +7,225 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./css/pv-base.css">
+  <!-- Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Material Symbols (Google Fonts) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" />
 
   <style>
-    /* Somente o conteúdo do ônibus (cards/paginação) */
     :root{
+      --ink:#0b1626;
+
+      --topA:#0b2a44;
+      --topB:#2c6aa3;
+      --topC:#0f3d63;
+
+      --pad: clamp(14px, 1.8vw, 26px);
+      --gap: clamp(12px, 1.4vw, 18px);
+
+      /* menos “branco estourado” */
+      --panel:#e7edf5;
+      --card: rgba(255,255,255,.78);
+      --line: rgba(210,222,238,.95);
+
+      --radius: clamp(24px, 2.2vw, 36px);
+      --radiusCard: clamp(18px, 1.8vw, 28px);
+
+      --footerH: clamp(54px, 6vh, 78px);
+
+      --ease: cubic-bezier(.2,.8,.2,1);
+      --anim: 520ms;
+
+      --dividerGrad: linear-gradient(90deg, rgba(44,106,163,0) 0%, rgba(44,106,163,.9) 18%, rgba(15,61,99,.95) 50%, rgba(44,106,163,.9) 82%, rgba(44,106,163,0) 100%);
+
+      --pillDark:#3a4656;
+      --pillDark2:#2f3845;
+
       --stageGap: 12px;
-      --ok:#1fa765;
-      --okSoft: rgba(31, 167, 101, .12);
+
+      /* cor padrão PontoView para linhas sem cor na API */
+      --pvBlue:#0f3d63;
     }
 
-    .pvContent{ padding: var(--pad); } /* já vem do base, aqui só reforço */
+    *{box-sizing:border-box}
+    html,body{height:100%}
 
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--ink);
+      background:#fff;
+      overflow:hidden;
+    }
+
+    .pvPage{ width:100vw; height:100vh; background:#fff; }
+    .pvShell{
+      width:100%;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+      background:#fff;
+    }
+
+    /* ===== HEADER ===== */
+    .pvHeader{
+      position:relative;
+      background: linear-gradient(180deg, var(--topB) 0%, var(--topC) 42%, var(--topA) 100%);
+      color:#fff;
+      padding: clamp(14px, 1.8vw, 22px) var(--pad);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:var(--gap);
+      flex:0 0 auto;
+      min-width:0;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      box-shadow: inset 0 -1px 0 rgba(255,255,255,.18);
+    }
+    .pvHeader::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(900px 120px at 50% 0%, rgba(255,255,255,.22), rgba(255,255,255,0) 65%),
+        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,0) 42%);
+      opacity:.95;
+    }
+    .pvHeaderLeft, .pvHeaderRight{ position:relative; z-index:1; }
+    .pvHeaderLeft{
+      display:flex;
+      align-items:center;
+      gap: clamp(12px, 1.5vw, 18px);
+      min-width:0;
+      flex:1 1 auto;
+    }
+
+    .pvIconBadge{
+      width: clamp(44px, 4.2vw, 64px);
+      height: clamp(44px, 4.2vw, 64px);
+      border-radius: 18px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.24);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.20),
+        0 14px 28px rgba(0,0,0,.14);
+      backdrop-filter: blur(10px);
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      color:#fff;
+    }
+    .pvIconBadge .material-symbols-outlined{
+      font-size: 34px;
+      line-height: 1;
+      color:#fff;
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 600,
+        'GRAD' 0,
+        'opsz' 24;
+      opacity:.98;
+    }
+
+    .pvTitles{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+    .pvTitle{
+      margin:0;
+      font-size: clamp(18px, 2.1vw, 34px);
+      font-weight:900;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      line-height:1.02;
+    }
+    .pvSubtitle{
+      font-size: clamp(11px, 1.0vw, 15px);
+      font-weight:900;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      opacity:.92;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+
+    .pvHeaderRight{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      min-width:max-content;
+    }
+    .pvClock{
+      user-select:none;
+      font-size: clamp(12px, 1.1vw, 16px);
+      font-weight: 900;
+      letter-spacing:.10em;
+      text-transform: uppercase;
+      color:#fff;
+      padding: clamp(10px, 1.1vw, 14px) clamp(14px, 1.5vw, 22px);
+      border-radius: 999px;
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.18),
+        0 12px 26px rgba(0,0,0,.14);
+      backdrop-filter: blur(10px);
+      white-space:nowrap;
+    }
+
+    /* ===== SUBBAR ===== */
+    .pvSubbar{
+      flex:0 0 auto;
+      padding: 10px var(--pad);
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(210,222,238,.9);
+    }
+    .pvSubLeft{
+      min-width:0;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:#344257;
+      opacity:.95;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .pvPageLabel{
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:#344257;
+      opacity:.95;
+      white-space:nowrap;
+    }
+
+    /* ===== CONTENT ===== */
+    .pvContent{
+      flex:1 1 auto;
+      min-height:0;
+      padding: var(--pad);
+      background:#fff;
+      overflow:hidden;
+    }
+    .pvCard{
+      height:100%;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(231,237,245,1), rgba(223,232,244,1));
+      padding: clamp(12px, 1.4vw, 18px);
+      min-height:0;
+      overflow:hidden;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+    }
+
+    /* ===== STAGE / PÁGINAS ===== */
     .busWrap{
       height:100%;
       display:flex;
@@ -28,7 +233,6 @@
       min-height:0;
       gap: 12px;
     }
-
     .warn{
       display:none;
       padding: 12px 14px;
@@ -41,7 +245,6 @@
       letter-spacing: .10em;
       text-transform: uppercase;
     }
-
     .stage{
       position:relative;
       flex: 1;
@@ -49,7 +252,6 @@
       overflow:hidden;
       background: transparent;
     }
-
     .page{
       position:absolute;
       inset: 0;
@@ -64,235 +266,332 @@
       opacity:1;
       transform: translateX(0);
       pointer-events:auto;
-      transition: opacity 520ms cubic-bezier(.2,.8,.2,1), transform 520ms cubic-bezier(.2,.8,.2,1);
+      transition: opacity var(--anim) var(--ease), transform var(--anim) var(--ease);
     }
     .page.exit{
       opacity:0;
       transform: translateX(-18px);
-      transition: opacity 520ms cubic-bezier(.2,.8,.2,1), transform 520ms cubic-bezier(.2,.8,.2,1);
+      transition: opacity var(--anim) var(--ease), transform var(--anim) var(--ease);
     }
 
+    /* ===== CARD (landscape) ===== */
     .card{
-      position:relative;
-      border-radius: 18px;
-      background: #ffffff;
+      background: var(--card);
       border: 1px solid var(--line);
-      box-shadow: 0 10px 26px rgba(2,10,23,.08);
-      overflow:hidden;
-      min-height: 92px;
-
+      border-radius: var(--radiusCard);
+      padding: clamp(12px, 1.25vw, 15px);
       display:grid;
-      grid-template-columns: 120px 1fr 260px;
-      gap: 14px;
+      grid-template-columns: 96px minmax(0, 1fr) 188px;
       align-items:center;
-      padding: 14px 16px;
+      gap: clamp(10px, 1.3vw, 16px);
+      min-width:0;
+      box-shadow: 0 12px 26px rgba(2,10,23,.10);
+      backdrop-filter: blur(7px);
+      position:relative;
+      overflow:hidden;
+      min-height: 82px;
     }
 
     .stripe{
       position:absolute;
       inset:0 auto 0 0;
-      width: 8px;
-      background: #0f3f82;
+      width: 10px;
+      border-radius: 999px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
     }
 
     .lineCol{
       display:flex;
       flex-direction:column;
-      gap: 10px;
+      gap: 2px;
       align-items:flex-start;
       padding-left: 10px;
       min-width:0;
     }
     .lineNum{
-      font-size: 38px;
+      font-size: clamp(26px, 2.4vw, 38px);
       font-weight: 900;
       letter-spacing: .02em;
       line-height: 1;
-      color: #0b1220;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
     }
 
-    .company{
-      display:inline-flex;
-      align-items:center;
-      gap: 7px;
-      font-size: 10px;
-      font-weight: 900;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: #334155;
-      padding: 5px 9px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: #f8fbff;
-      max-width: 165px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      opacity: .92;
-    }
-    .dot{
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #0f3f82;
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,.65);
-      flex: 0 0 auto;
-    }
+    .destCol{ min-width:0; }
 
-    .destCol{
-      min-width:0;
-      display:flex;
-      flex-direction:column;
-      gap: 6px;
-    }
+    /* ===== DESTINO (SEM FADE) + MARQUEE SUAVE ===== */
     .destName{
-      font-size: clamp(22px, 2.0vw, 32px);
+      position: relative;
+      min-width: 0;
+      overflow:hidden;
+      white-space:nowrap;
+      font-size: clamp(18px, 1.95vw, 30px);
       font-weight: 900;
       letter-spacing: .02em;
       text-transform: uppercase;
-      color: #0b1220;
+      color: var(--ink);
+      padding-right: 10px;
+
+      /* removido fade (mask) */
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+    .destText{
+      display:inline-block;
       white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+      will-change: transform;
+    }
+    .destName.is-marquee .destText{
+      animation: pvMarquee var(--marqDur, 10s) linear infinite;
+    }
+    @keyframes pvMarquee{
+      0%{ transform: translateX(0); }
+      10%{ transform: translateX(0); }
+      90%{ transform: translateX(calc(-1 * var(--marqMove, 0px))); }
+      100%{ transform: translateX(calc(-1 * var(--marqMove, 0px))); }
     }
 
+    /* ===== HORÁRIOS (discreto) ===== */
     .timesCol{
       display:flex;
       flex-direction:column;
       align-items:flex-end;
-      gap: 10px;
       width: 100%;
     }
-
     .timeRow{
       width: 100%;
-      max-width: 240px;
+      max-width: 168px;
       display:flex;
       align-items: stretch;
-      gap: 10px;
+      gap: 8px;
+      justify-content:flex-end;
     }
 
     .next{
       flex: 1 1 auto;
-      text-align:center;
-      padding: 10px 12px;
-      border-radius: 16px;
-      background: rgba(31, 167, 101, .08);
-      border: 1px solid rgba(31, 167, 101, .18);
+      text-align:left;
+      padding: 8px 10px;
+      border-radius: 14px;
+      background: rgba(15,61,99,.08);
+      border: 1px solid rgba(15,61,99,.16);
       display:flex;
-      flex-direction: column;
-      justify-content: center;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
       height: 100%;
+      box-shadow: 0 6px 14px rgba(0,0,0,.04);
     }
     .next .when{
-      font-size: 34px;
+      font-size: clamp(18px, 1.8vw, 26px);
       font-weight: 900;
-      letter-spacing: .06em;
-      color: rgba(31, 167, 101, .92);
-      line-height: 1.05;
+      letter-spacing: .04em;
+      color: rgba(11,22,38,.95);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
     }
     .next .label{
-      margin-top: 6px;
-      font-size: 11px;
+      margin: 4px 0 0 0;
+      font-size: 10px;
       font-weight: 900;
-      letter-spacing: .16em;
+      letter-spacing: .14em;
       text-transform: uppercase;
-      color: rgba(31, 167, 101, .72);
+      color: rgba(52,66,87,.92);
+      white-space:nowrap;
+    }
+    .next .statusDot{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background: rgba(59,130,246,.92);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.16);
+      flex:0 0 auto;
+    }
+    .next.is-soon{
+      background: rgba(31,167,101,.10);
+      border-color: rgba(31,167,101,.22);
+    }
+    .next.is-soon .statusDot{
+      background: rgba(31,167,101,.95);
+      box-shadow: 0 0 0 3px rgba(31,167,101,.16);
     }
 
     .nextSide{
       flex: 0 0 auto;
-      width: 112px;
-      border-radius: 16px;
-      border: 1px solid var(--line);
-      background: #f8fbff;
-      padding: 10px 10px;
+      width: 72px;
+      border-radius: 14px;
+      border: 1px solid rgba(15,61,99,.14);
+      background: rgba(255,255,255,.55);
+      padding: 7px 7px;
       display:flex;
       flex-direction: column;
       justify-content: center;
       gap: 6px;
+      box-shadow: 0 6px 14px rgba(0,0,0,.04);
     }
     .nextSideItem{
       width: 100%;
       text-align:center;
-      font-size: 12px;
+      font-size: 9px;
       font-weight: 900;
       letter-spacing: .10em;
-      padding: 6px 8px;
+      padding: 5px 6px;
       border-radius: 999px;
-      border: 1px solid var(--line);
-      background: #f1f5f9;
-      color: #0b1220;
+      border: 1px solid rgba(210,222,238,.95);
+      background: rgba(15,61,99,.06);
+      color: rgba(11,22,38,.92);
       white-space: nowrap;
-      opacity: .92;
+      opacity: .98;
     }
 
     .empty{
       padding: 22px 18px;
       border-radius: 16px;
-      background: #f8fafc;
+      background: rgba(255,255,255,.78);
       border: 1px solid var(--line);
-      color: var(--muted);
+      color: #344257;
       font-size: 12px;
       font-weight: 900;
       letter-spacing: .14em;
       text-transform: uppercase;
       text-align:center;
+      box-shadow: 0 12px 26px rgba(2,10,23,.10);
+      backdrop-filter: blur(7px);
     }
 
-    /* Subbar right: label + progress */
-    .pvPageLabel{
-      font-size: var(--t-sub);
-      font-weight: 900;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:#1f2a44;
-      opacity:.9;
-      white-space:nowrap;
+    /* ===== PROGRESS (virada de página) ===== */
+    .progressWrap{
+      flex:0 0 auto;
+      padding: 0 var(--pad);
+      background:#fff;
     }
-    .pvBar{
-      width: clamp(140px, 18vw, 240px);
-      height: 10px;
+    .divider{
+      height: 4px;
       border-radius: 999px;
-      background: #e7eefb;
-      border: 1px solid #d6e2f4;
-      overflow:hidden;
+      background: var(--dividerGrad);
+      position: relative;
+      overflow: hidden;
     }
-    .pvBar > div{
-      height:100%;
+    #barFill{
+      position:absolute;
+      inset:0;
       width:0%;
-      background: linear-gradient(90deg, #1c5aa6, #34c6d0);
+      background: linear-gradient(90deg, rgba(255,255,255,.16), rgba(255,255,255,.38));
+      mix-blend-mode: screen;
       border-radius: 999px;
       transition: width 120ms linear;
+      transform-origin:left center;
     }
 
-    @media (max-width: 980px){
-      .card{
-        min-height: 74px;
-        padding: 12px 14px;
-        gap: 12px;
-        grid-template-columns: 96px 1fr 210px;
-        border-radius: 16px;
-      }
-      .lineNum{ font-size: 30px; }
-      .company{ max-width: 140px; font-size: 9px; padding: 4px 8px; }
-      .dot{ width: 7px; height: 7px; }
-      .destName{ font-size: 22px; }
+    /* ===== FOOTER (legendas com marquee, logo fixa à direita) ===== */
+    .pvFooter{
+      flex:0 0 auto;
+      height: var(--footerH);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 10px var(--pad);
+      background:#fff;
+      gap: 12px;
+      min-width:0;
+    }
 
-      .timeRow{ max-width: 200px; gap: 9px; }
-      .next{ padding: 9px 10px; border-radius: 14px; }
-      .next .when{ font-size: 27px; }
-      .next .label{ font-size: 10px; margin-top: 5px; }
-      .nextSide{ width: 96px; padding: 9px 9px; border-radius: 14px; }
-      .nextSideItem{ font-size: 11px; padding: 6px 7px; }
-      .pvBar{ height: 9px; }
+    .brandsViewport{
+      flex: 1 1 auto;
+      min-width:0;
+      overflow:hidden;
+      position:relative;
+      padding-right: 10px;
+    }
+
+    .brandsTrack{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      white-space:nowrap;
+      will-change: transform;
+    }
+
+    .brandPill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--pillDark) 0%, var(--pillDark2) 100%);
+      border: 1px solid rgba(255,255,255,.12);
+      color:#fff;
+      font-weight: 900;
+      letter-spacing:.10em;
+      text-transform: uppercase;
+      font-size: 10px;
+      box-shadow: 0 10px 18px rgba(0,0,0,.14);
+      max-width: 100%;
+    }
+    .brandDot{
+      width:10px;height:10px;border-radius:999px;
+      background: var(--c, #2c6aa3);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.10);
+      flex:0 0 auto;
+    }
+    .brandTxt{
+      max-width: 44vw;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .pvFooterRight{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap: 10px;
+      flex:0 0 auto;
+    }
+    .pvLogo{
+      height: clamp(16px, 2.3vh, 22px);
+      width:auto;
+      display:block;
+      opacity:.92;
+    }
+
+    /* animação do marquee do rodapé */
+    .brandsViewport.is-marquee .brandsTrack{
+      animation: brandsMarquee var(--brandsDur, 18s) linear infinite;
+    }
+    @keyframes brandsMarquee{
+      0%   { transform: translateX(0); }
+      10%  { transform: translateX(0); }
+      90%  { transform: translateX(calc(-1 * var(--brandsMove, 0px))); }
+      100% { transform: translateX(calc(-1 * var(--brandsMove, 0px))); }
+    }
+
+    /* ===== PORTRAIT: destino embaixo do número da linha ===== */
+    @media (orientation: portrait){
+      .pvFooter{ height: clamp(62px, 8vh, 96px); }
+
+      .card{
+        grid-template-columns: 120px 1fr;
+        grid-template-rows: auto auto;
+        grid-template-areas:
+          "line times"
+          "dest dest";
+        align-items:start;
+        row-gap: 10px;
+        min-height: 96px;
+      }
+      .lineCol{ grid-area: line; }
+      .timesCol{ grid-area: times; }
+      .destCol{ grid-area: dest; }
+
+      .destName{
+        font-size: clamp(18px, 2.35vw, 30px);
+      }
+      .timeRow{ max-width: 172px; }
+      .nextSide{ width: 70px; }
     }
 
     @media (max-width: 640px){
-      .card{ grid-template-columns: 86px 1fr 180px; }
-      .destName{ font-size: 18px; }
-      .timeRow{ max-width: 170px; gap: 8px; }
-      .nextSide{ width: 86px; }
-      .nextSideItem{ font-size: 10px; padding: 5px 6px; }
-      .pvBar{ height: 8px; }
+      .timeRow{ max-width: 160px; }
+      .nextSide{ width: 66px; }
     }
   </style>
 </head>
@@ -301,22 +600,12 @@
   <div class="pvPage">
     <div class="pvShell" id="pvPanel"
       data-title="HORÁRIOS DE SAÍDA"
-      data-subtitle="ESTAÇÃO"
-      data-subleft="Próximas saídas (2h) • Next Bus">
+      data-subleft="Próximas saídas (2h)">
 
-      <!-- HEADER -->
       <header class="pvHeader">
         <div class="pvHeaderLeft">
-          <div class="pvIconBadge" aria-hidden="true" id="pvBadge">
-            <!-- Ícone ÔNIBUS -->
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M8 6h8a4 4 0 0 1 4 4v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7a4 4 0 0 1 4-4Z"/>
-              <path d="M6 16h12"/>
-              <path d="M7 19l-1 2"/>
-              <path d="M18 19l1 2"/>
-              <path d="M7.5 13h.01"/>
-              <path d="M16.5 13h.01"/>
-            </svg>
+          <div class="pvIconBadge" aria-hidden="true">
+            <span class="material-symbols-outlined">directions_bus</span>
           </div>
 
           <div class="pvTitles">
@@ -330,28 +619,32 @@
         </div>
       </header>
 
-      <!-- SUBBAR -->
       <div class="pvSubbar">
         <div class="pvSubLeft" id="pvSubLeft"></div>
         <div class="pvSubRight">
           <span class="pvPageLabel" id="pageLabel">PÁGINA 1/1</span>
-          <div class="pvBar" aria-hidden="true"><div id="barFill"></div></div>
         </div>
       </div>
 
-      <!-- CONTENT -->
       <main class="pvContent">
-        <section class="pvCard" style="padding:0; border:none; background:transparent;">
-          <div class="busWrap" style="padding:0; height:100%;">
+        <section class="pvCard">
+          <div class="busWrap">
             <div class="warn" id="warn"></div>
             <div class="stage" id="stage"></div>
           </div>
         </section>
       </main>
 
-      <!-- FOOTER -->
+      <div class="progressWrap" aria-hidden="true">
+        <div class="divider"><div id="barFill"></div></div>
+      </div>
+
       <footer class="pvFooter">
-        <div class="pvFooterLeft" id="pvFooterUpdate">ÚLTIMA ATUALIZAÇÃO • —</div>
+        <!-- Legenda com marquee (logo fica fixa à direita) -->
+        <div class="brandsViewport" id="brandsViewport">
+          <div class="brandsTrack" id="brandsTrack"></div>
+        </div>
+
         <div class="pvFooterRight">
           <img class="pvLogo" src="./assets/logo-pontoview.png" alt="PontoView" />
         </div>
@@ -359,53 +652,45 @@
     </div>
   </div>
 
+  <!-- KEY vem do config.js geral: window.PONTOVIEW_GMAPS_KEY -->
   <script src="config.js"></script>
 
-  <!-- SEU SCRIPT ORIGINAL (inalterado no comportamento) -->
   <script>
     /*******************************************************************
-     * INIT PADRÃO (título/subbar/relógio)
+     * INIT
      *******************************************************************/
     const panel = document.getElementById("pvPanel");
     const titleEl = document.getElementById("pvTitle");
     const subtitleEl = document.getElementById("pvSubtitle");
     const subLeftEl = document.getElementById("pvSubLeft");
-    const footerUpdateEl = document.getElementById("pvFooterUpdate");
+
+    const brandsViewport = document.getElementById("brandsViewport");
+    const brandsTrack = document.getElementById("brandsTrack");
 
     titleEl.textContent = panel.dataset.title || "";
-    subtitleEl.textContent = (panel.dataset.subtitle || "").toUpperCase();
     subLeftEl.textContent = panel.dataset.subleft || "";
 
     function pad2(n){ return String(n).padStart(2,"0"); }
     function hhmm(d=new Date()){ return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`; }
-
     function tickClock(){ document.getElementById("pvClock").textContent = hhmm(); }
     tickClock();
     const msToNextSecond = 1000 - new Date().getMilliseconds();
     setTimeout(() => { tickClock(); setInterval(tickClock, 1000); }, msToNextSecond);
 
-    function setUpdatedNow(){ footerUpdateEl.textContent = `ÚLTIMA ATUALIZAÇÃO • ${hhmm()}`; }
-
     /*******************************************************************
-     * PAINEL DE CONFIGURAÇÃO POR URL
+     * CONFIG
      *******************************************************************/
     const DEFAULT_STATION_FALLBACK = "Centro da Cidade";
 
     function getQuery(){
       const q = new URLSearchParams(location.search);
       const station = (q.get("station") || "").trim();
-      const demo = (q.get("demo") || "").trim();
-      return {
-        station: station || null,
-        demo: demo === "1" || demo.toLowerCase() === "true" || demo.toLowerCase() === "demo"
-      };
+      return { station: station || null };
     }
     const Q = getQuery();
 
     const PV_CONFIG = {
-      DEMO_MODE: Q.demo,
       STATION_QUERY: Q.station || "Av. Ângelo Giuberti, 291 - Esplanada, Colatina - ES, 29702-060",
-
       TIME_WINDOW_HOURS: 2,
       SWEEP_POINTS: 12,
       SWEEP_RADIUS_M: 1200,
@@ -413,15 +698,10 @@
       PAST_TOLERANCE_MS: 20_000,
       CLUSTER_GAP_MIN: 2,
 
-      DEMO_LINES_COUNT: 18,
-      DEMO_REFRESH_SEC: 25,
-      DEMO_HEADSIGN_POOL: ["COHAB","AROEIRA","SANTA TEREZA","CENTRO","BAIRRO INDUSTRIAL","RIVIERA","AYRTON SENNA"],
-      DEMO_AGENCIES: [
-        { name:"VIAÇÃO SÃO GABRIEL", color:"#f3c316" },
-        { name:"VIAÇÃO JOANA DARC", color:"#0f3f82" },
-        { name:"VIAÇÃO SÃO ROQUE", color:"#5fc2ff" },
-        { name:"TRANS COLATINA", color:"#ff7a00" }
-      ]
+      /* footer marquee */
+      FOOTER_MARQUEE_PX_PER_SEC: 55,
+      FOOTER_MARQUEE_MIN_SEC: 12,
+      FOOTER_MARQUEE_MAX_SEC: 26
     };
 
     const GOOGLE_MAPS_API_KEY = (window.PONTOVIEW_GMAPS_KEY || "").trim() || "COLE_SUA_API_KEY_AQUI";
@@ -457,6 +737,93 @@
       return clusters.map(c => c.length === 1 ? fmtHHMM(c[0]) : `${fmtHHMM(c[0])}–${fmtHHMM(c[c.length-1])}`);
     }
 
+    /* ====== MARQUEE DESTINO (apenas se overflow) ====== */
+    function applyDestMarquee(root = document){
+      const nodes = root.querySelectorAll(".destName");
+      nodes.forEach(n => {
+        n.classList.remove("is-marquee");
+        n.style.removeProperty("--marqMove");
+        n.style.removeProperty("--marqDur");
+
+        const t = n.querySelector(".destText");
+        if (!t) return;
+
+        const over = t.scrollWidth - n.clientWidth;
+        if (over > 18){
+          n.classList.add("is-marquee");
+          n.style.setProperty("--marqMove", `${over}px`);
+          const pxPerSec = 40;
+          const seconds = Math.max(8, Math.min(18, over / pxPerSec + 6));
+          n.style.setProperty("--marqDur", `${seconds}s`);
+        }
+      });
+    }
+
+    /* ====== RODAPÉ: renderiza todas as empresas/operadoras e aplica marquee se não couber ====== */
+    function applyFooterMarquee(){
+      brandsViewport.classList.remove("is-marquee");
+      brandsViewport.style.removeProperty("--brandsMove");
+      brandsViewport.style.removeProperty("--brandsDur");
+
+      // se não tem nada, sai
+      if (!brandsTrack.children.length) return;
+
+      // mede overflow
+      const over = brandsTrack.scrollWidth - brandsViewport.clientWidth;
+      if (over > 10){
+        brandsViewport.classList.add("is-marquee");
+        brandsViewport.style.setProperty("--brandsMove", `${over}px`);
+
+        const pxPerSec = PV_CONFIG.FOOTER_MARQUEE_PX_PER_SEC;
+        const seconds = Math.max(
+          PV_CONFIG.FOOTER_MARQUEE_MIN_SEC,
+          Math.min(PV_CONFIG.FOOTER_MARQUEE_MAX_SEC, over / pxPerSec + 8)
+        );
+        brandsViewport.style.setProperty("--brandsDur", `${seconds}s`);
+      }
+    }
+
+    function renderLegendFromCards(cards){
+      // Quero “todas as empresas que operam as linhas presentes”.
+      // Se a API não devolver agency, agrupamos por "LINHA X" para não colapsar.
+      const map = new Map(); // name -> {color, count}
+
+      (cards || []).forEach(c => {
+        const name = (c.agency || "").trim();
+        if (!name) return;
+
+        const color = (c.lineColor || "").trim() || getComputedStyle(document.documentElement).getPropertyValue("--pvBlue").trim() || "#0f3d63";
+
+        const cur = map.get(name) || { color, count: 0 };
+        cur.count += 1;
+        // mantém primeira cor que aparecer
+        if (!cur.color && color) cur.color = color;
+        map.set(name, cur);
+      });
+
+      const entries = Array.from(map.entries())
+        .sort((a,b)=> (b[1].count - a[1].count) || a[0].localeCompare(b[0]));
+
+      brandsTrack.innerHTML = "";
+      if (!entries.length){
+        brandsTrack.innerHTML = "";
+        applyFooterMarquee();
+        return;
+      }
+
+      entries.forEach(([name, info]) => {
+        const pill = document.createElement("div");
+        pill.className = "brandPill";
+        pill.style.setProperty("--c", info.color || "#0f3d63");
+        pill.title = name;
+        pill.innerHTML = `<span class="brandDot"></span><span class="brandTxt">${escapeHtml(name)}</span>`;
+        brandsTrack.appendChild(pill);
+      });
+
+      // aplica marquee caso não caiba
+      requestAnimationFrame(() => requestAnimationFrame(applyFooterMarquee));
+    }
+
     let currentCards = [];
     let pages = [];
     let pageIndex = 0;
@@ -487,17 +854,20 @@
       const el = document.createElement("div");
       el.className = "card";
 
-      const stripeColor = (card.lineColor || "").trim() || "#0f3f82";
-      const dotColor = stripeColor;
-
-      const next = fmtHHMM(card.times[0]);
+      const stripeColor = (card.lineColor || "").trim() || "#0f3d63"; // fallback azul PontoView
+      const nextMs = card.times[0];
+      const next = fmtHHMM(nextMs);
       const rest = card.times.slice(1);
 
       const nextTimes = clusterTimes(rest);
       const hasNext = nextTimes.length > 0;
 
-      const MAX_NEXT = 3;
+      const portrait = window.matchMedia("(orientation: portrait)").matches;
+      const MAX_NEXT = portrait ? 2 : 3;
       const show = nextTimes.slice(0, MAX_NEXT);
+
+      const mins = Math.round((nextMs - Date.now()) / 60000);
+      const isSoon = Number.isFinite(mins) && mins >= 0 && mins <= 10;
 
       const nextSideHtml = hasNext
         ? `<div class="nextSide" aria-label="Próximos horários">
@@ -505,26 +875,23 @@
            </div>`
         : ``;
 
-      const agencyLabel = (card.agency || "").trim() || "ÔNIBUS";
-
       el.innerHTML = `
         <div class="lineCol">
           <div class="lineNum">${escapeHtml(card.line)}</div>
-          <div class="company" title="${escapeHtml(agencyLabel)}">
-            <span class="dot" style="background:${escapeHtml(dotColor)}"></span>
-            <span>${escapeHtml(agencyLabel)}</span>
-          </div>
         </div>
 
         <div class="destCol">
-          <div class="destName">${escapeHtml(card.destination)}</div>
+          <div class="destName"><span class="destText">${escapeHtml(card.destination)}</span></div>
         </div>
 
         <div class="timesCol">
           <div class="timeRow">
-            <div class="next">
-              <div class="when">${next}</div>
-              <div class="label">SAÍDA</div>
+            <div class="next ${isSoon ? "is-soon" : ""}">
+              <div>
+                <div class="when">${next}</div>
+                <div class="label">${isSoon ? "SAINDO EM ATÉ 10 MIN" : "PRÓXIMA SAÍDA"}</div>
+              </div>
+              <span class="statusDot" aria-hidden="true"></span>
             </div>
             ${nextSideHtml}
           </div>
@@ -546,7 +913,7 @@
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       const available = Math.max(0, stageEl.clientHeight);
-      const cardH = sample.getBoundingClientRect().height || 90;
+      const cardH = sample.getBoundingClientRect().height || 92;
       const gap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--stageGap")) || 12;
 
       stageEl.innerHTML = "";
@@ -565,6 +932,9 @@
       pages = [];
       pageIndex = 0;
 
+      // legenda do rodapé com marquee se necessário
+      renderLegendFromCards(cards);
+
       if (!cards.length){
         const p = document.createElement("div");
         p.className = "page active";
@@ -582,7 +952,6 @@
         const chunk = cards.slice(i, i+perPage);
         const page = document.createElement("div");
         page.className = "page";
-
         for (const c of chunk) page.appendChild(buildCardEl(c));
         stageEl.appendChild(page);
         pages.push(page);
@@ -591,11 +960,12 @@
       pages[0].classList.add("active");
       setPagerLabel();
       startPaging();
+
+      requestAnimationFrame(() => requestAnimationFrame(() => applyDestMarquee(pages[0])));
     }
 
     function showPage(nextIndex){
       if (!pages.length) return;
-
       const from = pages[pageIndex];
       const to = pages[nextIndex];
       if (from === to) return;
@@ -612,6 +982,8 @@
       pageIndex = nextIndex;
       setPagerLabel();
       setProgress(0);
+
+      requestAnimationFrame(() => requestAnimationFrame(() => applyDestMarquee(to)));
     }
 
     function startPaging(){
@@ -633,64 +1005,9 @@
       }, PAGE_DURATION_MS);
     }
 
-    function randInt(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
-    function pick(arr){ return arr[randInt(0, arr.length - 1)]; }
-
-    function buildDemoCards(){
-      const now = Date.now();
-      const end = now + PV_CONFIG.TIME_WINDOW_HOURS * 60 * 60 * 1000;
-
-      const lines = new Set();
-      while (lines.size < PV_CONFIG.DEMO_LINES_COUNT){
-        const base = Math.random() < 0.30 ? randInt(300, 499) : randInt(1, 199);
-        lines.add(String(base));
-      }
-
-      const cards = [];
-      for (const line of lines){
-        const dest = pick(PV_CONFIG.DEMO_HEADSIGN_POOL);
-        const agency = pick(PV_CONFIG.DEMO_AGENCIES);
-
-        const times = [];
-        let t = now + randInt(2, 18) * 60 * 1000;
-        while (t <= end){
-          times.push(t);
-          t += randInt(6, 36) * 60 * 1000;
-        }
-        times.sort((a,b)=>a-b);
-        if (Math.random() < 0.20) times.splice(1);
-
-        cards.push({
-          line,
-          destination: dest,
-          times,
-          nextTime: times[0],
-          agency: agency.name,
-          lineColor: agency.color
-        });
-      }
-
-      cards.sort((a,b)=>a.nextTime - b.nextTime);
-      return cards;
-    }
-
-    let demoTimer = null;
-    async function startDemoLoop(){
-      subtitleEl.textContent = String(PV_CONFIG.STATION_QUERY || DEFAULT_STATION_FALLBACK).toUpperCase();
-      setStatus(`Próximas saídas (${PV_CONFIG.TIME_WINDOW_HOURS}h) • Modo demo`);
-      warnEl.style.display = "none";
-
-      const render = async () => {
-        currentCards = buildDemoCards();
-        await paginateCards(currentCards);
-        setUpdatedNow();
-      };
-
-      await render();
-      if (demoTimer) clearInterval(demoTimer);
-      demoTimer = setInterval(render, PV_CONFIG.DEMO_REFRESH_SEC * 1000);
-    }
-
+    /*******************************************************************
+     * GOOGLE MAPS
+     *******************************************************************/
     function loadGoogleMaps(){
       return new Promise((resolve, reject) => {
         if (window.google?.maps) return resolve();
@@ -698,7 +1015,7 @@
         const key = (GOOGLE_MAPS_API_KEY || "").trim();
         if (!key || key === "COLE_SUA_API_KEY_AQUI"){
           warnEl.style.display = "block";
-          warnEl.textContent = "INSIRA SUA GOOGLE MAPS API KEY (config.js OU CONSTANTE GOOGLE_MAPS_API_KEY).";
+          warnEl.textContent = "INSIRA SUA GOOGLE MAPS API KEY NO config.js (window.PONTOVIEW_GMAPS_KEY).";
           return reject(new Error("Missing API key"));
         }
 
@@ -797,26 +1114,34 @@
           if (step.travel_mode !== "TRANSIT" || !step.transit) continue;
 
           const td = step.transit;
+
           const lineShort = td.line?.short_name || td.line?.name || "—";
           const headsign = td.headsign || td.line?.name || td.arrival_stop?.name || "Destino";
 
           const depMs = toMillis(td.departure_time) || toMillis(td.departure_time?.value);
           if (!depMs) continue;
 
-          const agencyName =
+          const agencyFromApi =
             td.line?.agencies?.[0]?.name ||
             td.line?.agencies?.[0]?.short_name ||
             "";
 
-          const lineColor = (td.line?.color || "").trim();
+          // “empresas que operam as linhas”: se não vier, vira um rótulo estável por linha (não inventa empresa)
+          const agencyLabel = agencyFromApi.trim()
+            ? agencyFromApi.trim()
+            : `LINHA ${String(lineShort).trim() || "—"}`;
+
+          // cor da linha: se a API não informar, mantém azul PontoView
+          let lineColor = (td.line?.color || "").trim();
+          if (!lineColor) lineColor = "#0f3d63";
 
           trips.push({
             line: String(lineShort),
             destination: String(headsign),
             timeMs: depMs,
-            agency: String(agencyName || "").trim(),
+            agency: agencyLabel,
             lineColor,
-            key: `${String(lineShort)}|${String(headsign)}|${depMs}|${String(agencyName||"")}|${String(lineColor||"")}`
+            key: `${String(lineShort)}|${String(headsign)}|${depMs}|${agencyLabel}|${String(lineColor||"")}`
           });
         }
       }
@@ -910,8 +1235,6 @@
       currentCards = cards;
       await paginateCards(cards);
 
-      setUpdatedNow();
-
       if (!okCount) setStatus("Sem resposta da API (verifique a KEY e restrições).");
       else setStatus(`Próximas saídas (${PV_CONFIG.TIME_WINDOW_HOURS}h) • Linhas: ${cards.length}`);
     }
@@ -923,12 +1246,6 @@
 
     (async function boot(){
       try{
-        if (PV_CONFIG.DEMO_MODE){
-          await startDemoLoop();
-          window.addEventListener("resize", async () => { await paginateCards(currentCards || []); });
-          return;
-        }
-
         setStatus("Carregando Google Maps…");
         await loadGoogleMaps();
         warnEl.style.display = "none";
@@ -941,24 +1258,25 @@
           lng: geo.geometry.location.lng()
         };
 
-        const title = buildTitleFromGeocode(geo);
-        subtitleEl.textContent = String(title || DEFAULT_STATION_FALLBACK).toUpperCase();
+        const locTitle = buildTitleFromGeocode(geo);
+        subtitleEl.textContent = String(locTitle || DEFAULT_STATION_FALLBACK).toUpperCase();
 
         setStatus("Atualizando linhas…");
         await refreshData();
         scheduleRefresh();
 
-        window.addEventListener("resize", async () => { await paginateCards(currentCards || []); });
+        window.addEventListener("resize", async () => {
+          await paginateCards(currentCards || []);
+          requestAnimationFrame(() => requestAnimationFrame(applyFooterMarquee));
+        });
       }catch(err){
         console.warn(err);
         warnEl.style.display = "block";
-        warnEl.textContent = "ERRO AO INICIAR. VERIFIQUE INTERNET, API KEY E O TEXTO DO ?station=...";
+        warnEl.textContent = "ERRO AO INICIAR: " + (err?.message || String(err));
         subtitleEl.textContent = DEFAULT_STATION_FALLBACK.toUpperCase();
         setStatus("Aguardando configuração…");
-        footerUpdateEl.textContent = "ÚLTIMA ATUALIZAÇÃO • —";
       }
     })();
   </script>
 </body>
 </html>
-
