@@ -107,17 +107,20 @@
     .pvIconBadge{
       width: clamp(44px, 4.2vw, 64px);
       height: clamp(44px, 4.2vw, 64px);
-      border-radius: 18px;
-      background: rgba(255,255,255,.14);
-      border: 1px solid rgba(255,255,255,.24);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.20),
-        0 14px 28px rgba(0,0,0,.14);
-      backdrop-filter: blur(10px);
       display:grid;
       place-items:center;
       flex:0 0 auto;
-      color:#fff;
+      background:none;
+      border:0;
+      border-radius:0;
+      box-shadow:none;
+      backdrop-filter:none;
+    }
+    .pvIconBadge .pvBrandIcon{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
     }
     .pvIconBadge .material-symbols-outlined{
       font-size: 34px;
@@ -158,19 +161,17 @@
     }
     .pvClock{
       user-select:none;
-      font-size: clamp(12px, 1.1vw, 16px);
-      font-weight: 900;
-      letter-spacing:.10em;
-      text-transform: uppercase;
-      color:#fff;
-      padding: clamp(10px, 1.1vw, 14px) clamp(14px, 1.5vw, 22px);
-      border-radius: 999px;
-      background: rgba(255,255,255,.16);
-      border: 1px solid rgba(255,255,255,.22);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.18),
-        0 12px 26px rgba(0,0,0,.14);
-      backdrop-filter: blur(10px);
+      font-size: clamp(28px, 2.5vw, 42px);
+      font-weight:800;
+      line-height:1;
+      font-variant-numeric:tabular-nums;
+      letter-spacing:-.035em;
+      color:#17263a;
+      padding: clamp(8px, .65vw, 10px) clamp(12px, 1vw, 16px);
+      border-radius: clamp(14px, 1.25vw, 19px);
+      background: linear-gradient(145deg, #fff 0%, #eef1f5 100%);
+      border:1px solid rgba(255,255,255,.85);
+      box-shadow: inset 0 1px 0 #fff, 0 5px 14px rgba(2,10,23,.12);
       white-space:nowrap;
     }
 
@@ -211,18 +212,20 @@
     .pvContent{
       flex:1 1 auto;
       min-height:0;
-      padding: var(--pad);
-      background:#fff;
+      /* O fundo agora é do painel, sem card externo envolvendo as linhas. */
+      padding: clamp(8px, .85vw, 12px);
+      background: linear-gradient(180deg, #e7edf5, #dfe8f4);
       overflow:hidden;
     }
     .pvCard{
       height:100%;
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(231,237,245,1), rgba(223,232,244,1));
-      padding: clamp(12px, 1.4vw, 18px);
       min-height:0;
+      padding:0;
       overflow:hidden;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+      background:transparent;
+      border:0;
+      border-radius:0;
+      box-shadow:none;
     }
 
     /* ===== STAGE / PÁGINAS ===== */
@@ -254,24 +257,39 @@
     }
     .page{
       position:absolute;
-      inset: 0;
+      inset:0;
       display:grid;
-      gap: var(--stageGap);
+      gap:var(--stageGap);
       align-content:start;
-      opacity:0;
-      transform: translateX(18px);
+      visibility:hidden;
       pointer-events:none;
     }
     .page.active{
-      opacity:1;
-      transform: translateX(0);
+      visibility:visible;
       pointer-events:auto;
-      transition: opacity var(--anim) var(--ease), transform var(--anim) var(--ease);
     }
-    .page.exit{
+    .page .card{
       opacity:0;
-      transform: translateX(-18px);
-      transition: opacity var(--anim) var(--ease), transform var(--anim) var(--ease);
+      transform:translateY(12px);
+    }
+    .page.active .card{
+      animation: lineReveal 540ms var(--ease) both;
+      animation-delay: calc(var(--row-index, 0) * 110ms);
+    }
+    .page.exit{ visibility:visible; pointer-events:none; }
+    .page.exit .card{
+      opacity:0;
+      transform:none;
+      animation:none;
+      transition:opacity 180ms ease;
+    }
+    @keyframes lineReveal{
+      from{opacity:0;transform:translateY(12px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .page.active .card{animation:none;opacity:1;transform:none}
+      .page.exit .card{transition:none}
     }
 
     /* ===== CARD (landscape) ===== */
@@ -281,9 +299,9 @@
       border-radius: var(--radiusCard);
       padding: clamp(12px, 1.25vw, 15px);
       display:grid;
-      grid-template-columns: 96px minmax(0, 1fr) 188px;
+      grid-template-columns: max-content minmax(0, 1fr) 220px;
       align-items:center;
-      gap: clamp(10px, 1.3vw, 16px);
+      gap: clamp(12px, 1.4vw, 18px);
       min-width:0;
       box-shadow: 0 12px 26px rgba(2,10,23,.10);
       backdrop-filter: blur(7px);
@@ -292,29 +310,56 @@
       min-height: 82px;
     }
 
-    .stripe{
-      position:absolute;
-      inset:0 auto 0 0;
-      width: 10px;
-      border-radius: 999px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
-    }
-
     .lineCol{
       display:flex;
-      flex-direction:column;
-      gap: 2px;
-      align-items:flex-start;
-      padding-left: 10px;
+      align-items:center;
+      justify-content:flex-start;
       min-width:0;
     }
+    .vehicleTypeIcon{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 auto;
+      font-size: clamp(20px, 1.6vw, 26px);
+      color:#315777;
+      line-height:1;
+    }
+    .vehicleTypeIcon.material-symbols-outlined{
+      font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24;
+    }
+
     .lineNum{
-      font-size: clamp(26px, 2.4vw, 38px);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width: 78px;
+      max-width: 168px;
+      min-height: 58px;
+      padding: 0 16px;
+      border-radius: 17px;
+      background: var(--lineBadgeColor, var(--pvBlue));
+      color: var(--lineBadgeText, #fff);
+      border: 1px solid rgba(255,255,255,.40);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.22),
+        0 8px 18px rgba(2,10,23,.14);
+      font-size: clamp(26px, 2.5vw, 40px);
       font-weight: 900;
-      letter-spacing: .02em;
+      letter-spacing: 0;
       line-height: 1;
-      color: var(--ink);
       font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .lineNum.is-long{
+      font-size: clamp(22px, 2.05vw, 32px);
+      padding-inline: 14px;
+    }
+    .lineNum.is-xlong{
+      font-size: clamp(18px, 1.7vw, 27px);
+      padding-inline: 12px;
     }
 
     .destCol{ min-width:0; }
@@ -325,7 +370,7 @@
       min-width: 0;
       overflow:hidden;
       white-space:nowrap;
-      font-size: clamp(18px, 1.95vw, 30px);
+      font-size: clamp(21px, 2.2vw, 34px);
       font-weight: 900;
       letter-spacing: .02em;
       text-transform: uppercase;
@@ -361,6 +406,7 @@
     .timeRow{
       width: 100%;
       max-width: 168px;
+      height: 66px;
       display:flex;
       align-items: stretch;
       gap: 8px;
@@ -382,7 +428,7 @@
       box-shadow: 0 6px 14px rgba(0,0,0,.04);
     }
     .next .when{
-      font-size: clamp(18px, 1.8vw, 26px);
+      font-size: clamp(21px, 2.05vw, 30px);
       font-weight: 900;
       letter-spacing: .04em;
       color: rgba(11,22,38,.95);
@@ -398,49 +444,49 @@
       color: rgba(52,66,87,.92);
       white-space:nowrap;
     }
-    .next .statusDot{
-      width:10px;
-      height:10px;
-      border-radius:999px;
-      background: rgba(59,130,246,.92);
-      box-shadow: 0 0 0 3px rgba(59,130,246,.16);
-      flex:0 0 auto;
-    }
     .next.is-soon{
       background: rgba(31,167,101,.10);
       border-color: rgba(31,167,101,.22);
     }
-    .next.is-soon .statusDot{
-      background: rgba(31,167,101,.95);
-      box-shadow: 0 0 0 3px rgba(31,167,101,.16);
-    }
 
     .nextSide{
       flex: 0 0 auto;
-      width: 72px;
+      width: 92px;
       border-radius: 14px;
-      border: 1px solid rgba(15,61,99,.14);
-      background: rgba(255,255,255,.55);
-      padding: 7px 7px;
+      border: 1px solid rgba(15,61,99,.12);
+      background: rgba(255,255,255,.82);
+      padding: 2px 7px;
+      height: 100%;
+      min-height: 0;
       display:flex;
       flex-direction: column;
       justify-content: center;
-      gap: 6px;
+      gap: 0;
       box-shadow: 0 6px 14px rgba(0,0,0,.04);
+      overflow: hidden;
     }
     .nextSideItem{
       width: 100%;
       text-align:center;
-      font-size: 9px;
+      font-size: clamp(12px, 1.05vw, 15px);
       font-weight: 900;
-      letter-spacing: .10em;
-      padding: 5px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(210,222,238,.95);
-      background: rgba(15,61,99,.06);
-      color: rgba(11,22,38,.92);
+      letter-spacing: .02em;
+      flex: 1 1 0;
+      min-height: 0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 0;
+      border: 0;
+      border-bottom: 1px solid rgba(210,222,238,.95);
+      background: transparent;
+      color: rgba(11,22,38,.94);
       white-space: nowrap;
-      opacity: .98;
+      border-radius: 0;
+      line-height: 1;
+    }
+    .nextSideItem:last-child{
+      border-bottom: 0;
     }
 
     .empty{
@@ -500,43 +546,61 @@
       min-width:0;
       overflow:hidden;
       position:relative;
-      padding-right: 10px;
+      padding-right:10px;
+      mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
     }
 
     .brandsTrack{
-      display:inline-flex;
+      display:flex;
       align-items:center;
-      gap: 10px;
+      gap:14px;
       white-space:nowrap;
+      width:max-content;
       will-change: transform;
+    }
+
+    .brandSet{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex:0 0 auto;
     }
 
     .brandPill{
       display:inline-flex;
       align-items:center;
       gap:10px;
-      padding: 9px 12px;
-      border-radius: 999px;
-      background: linear-gradient(180deg, var(--pillDark) 0%, var(--pillDark2) 100%);
-      border: 1px solid rgba(255,255,255,.12);
-      color:#fff;
-      font-weight: 900;
-      letter-spacing:.10em;
-      text-transform: uppercase;
-      font-size: 10px;
-      box-shadow: 0 10px 18px rgba(0,0,0,.14);
-      max-width: 100%;
+      padding:10px 14px;
+      border-radius:999px;
+      background: rgba(255,255,255,.94);
+      border:1px solid rgba(15,61,99,.14);
+      color:#10233b;
+      font-weight:900;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      font-size:11px;
+      box-shadow:0 8px 18px rgba(2,10,23,.10);
+      flex:0 0 auto;
+      max-width:none;
+    }
+    .brandDots{
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      flex:0 0 auto;
     }
     .brandDot{
-      width:10px;height:10px;border-radius:999px;
+      width:12px;
+      height:12px;
+      border-radius:999px;
       background: var(--c, #2c6aa3);
-      box-shadow: 0 0 0 3px rgba(255,255,255,.10);
+      box-shadow:0 0 0 4px rgba(15,61,99,.08);
       flex:0 0 auto;
     }
     .brandTxt{
-      max-width: 44vw;
-      overflow:hidden;
-      text-overflow:ellipsis;
+      overflow:visible;
+      text-overflow:clip;
     }
 
     .pvFooterRight{
@@ -553,15 +617,12 @@
       opacity:.92;
     }
 
-    /* animação do marquee do rodapé */
     .brandsViewport.is-marquee .brandsTrack{
-      animation: brandsMarquee var(--brandsDur, 18s) linear infinite;
+      animation: brandsLoop var(--brandsDur, 24s) linear infinite;
     }
-    @keyframes brandsMarquee{
-      0%   { transform: translateX(0); }
-      10%  { transform: translateX(0); }
-      90%  { transform: translateX(calc(-1 * var(--brandsMove, 0px))); }
-      100% { transform: translateX(calc(-1 * var(--brandsMove, 0px))); }
+    @keyframes brandsLoop{
+      from{ transform: translateX(0); }
+      to{ transform: translateX(calc(-1 * var(--brandsMove, 0px))); }
     }
 
     /* ===== PORTRAIT: destino embaixo do número da linha ===== */
@@ -569,7 +630,7 @@
       .pvFooter{ height: clamp(62px, 8vh, 96px); }
 
       .card{
-        grid-template-columns: 120px 1fr;
+        grid-template-columns: max-content 1fr;
         grid-template-rows: auto auto;
         grid-template-areas:
           "line times"
@@ -583,15 +644,15 @@
       .destCol{ grid-area: dest; }
 
       .destName{
-        font-size: clamp(18px, 2.35vw, 30px);
+        font-size: clamp(21px, 2.6vw, 34px);
       }
-      .timeRow{ max-width: 172px; }
-      .nextSide{ width: 70px; }
+      .timeRow{ max-width: 188px; }
+      .nextSide{ width: 88px; }
     }
 
     @media (max-width: 640px){
-      .timeRow{ max-width: 160px; }
-      .nextSide{ width: 66px; }
+      .timeRow{ max-width: 176px; }
+      .nextSide{ width: 82px; }
     }
   </style>
 </head>
@@ -605,7 +666,7 @@
       <header class="pvHeader">
         <div class="pvHeaderLeft">
           <div class="pvIconBadge" aria-hidden="true">
-            <span class="material-symbols-outlined">directions_bus</span>
+            <img class="pvBrandIcon" src="https://raw.githubusercontent.com/pdrcorrea/PainelOnibus-Variavel/main/assets/icon.png" alt="" />
           </div>
 
           <div class="pvTitles">
@@ -646,7 +707,7 @@
         </div>
 
         <div class="pvFooterRight">
-          <img class="pvLogo" src="./assets/logo-pontoview.png" alt="PontoView" />
+          <img class="pvLogo" src="https://raw.githubusercontent.com/pdrcorrea/PainelOnibus-Variavel/main/assets/LogoBusBoardAzul.png" alt="PontoView" />
         </div>
       </footer>
     </div>
@@ -765,63 +826,69 @@
       brandsViewport.style.removeProperty("--brandsMove");
       brandsViewport.style.removeProperty("--brandsDur");
 
-      // se não tem nada, sai
-      if (!brandsTrack.children.length) return;
+      const firstSet = brandsTrack.querySelector(".brandSet");
+      const sets = brandsTrack.querySelectorAll(".brandSet");
+      if (!firstSet || sets.length < 2) return;
 
-      // mede overflow
-      const over = brandsTrack.scrollWidth - brandsViewport.clientWidth;
-      if (over > 10){
-        brandsViewport.classList.add("is-marquee");
-        brandsViewport.style.setProperty("--brandsMove", `${over}px`);
+      const move = firstSet.scrollWidth + 12;
+      brandsViewport.classList.add("is-marquee");
+      brandsViewport.style.setProperty("--brandsMove", `${move}px`);
 
-        const pxPerSec = PV_CONFIG.FOOTER_MARQUEE_PX_PER_SEC;
-        const seconds = Math.max(
-          PV_CONFIG.FOOTER_MARQUEE_MIN_SEC,
-          Math.min(PV_CONFIG.FOOTER_MARQUEE_MAX_SEC, over / pxPerSec + 8)
-        );
-        brandsViewport.style.setProperty("--brandsDur", `${seconds}s`);
-      }
+      const pxPerSec = 38;
+      const seconds = Math.max(18, Math.min(42, move / pxPerSec));
+      brandsViewport.style.setProperty("--brandsDur", `${seconds}s`);
     }
 
     function renderLegendFromCards(cards){
-      // Quero “todas as empresas que operam as linhas presentes”.
-      // Se a API não devolver agency, agrupamos por "LINHA X" para não colapsar.
-      const map = new Map(); // name -> {color, count}
-
+      const map = new Map();
+      const fallback = '#0f3d63';
       (cards || []).forEach(c => {
-        const name = (c.agency || "").trim();
+        const name = (c.agency || '').trim();
         if (!name) return;
-
-        const color = (c.lineColor || "").trim() || getComputedStyle(document.documentElement).getPropertyValue("--pvBlue").trim() || "#0f3d63";
-
-        const cur = map.get(name) || { color, count: 0 };
-        cur.count += 1;
-        // mantém primeira cor que aparecer
-        if (!cur.color && color) cur.color = color;
-        map.set(name, cur);
+        // Use the same color validation as the line number badges.
+        const rawColor = (c.lineColor || '').trim();
+        const color = /^#[0-9a-f]{6}$/i.test(rawColor) ? rawColor.toUpperCase() : fallback.toUpperCase();
+        if (!map.has(name)) map.set(name, new Set());
+        map.get(name).add(color);
       });
 
       const entries = Array.from(map.entries())
-        .sort((a,b)=> (b[1].count - a[1].count) || a[0].localeCompare(b[0]));
+        .sort((a,b) => a[0].localeCompare(b[0]));
+      brandsTrack.innerHTML = '';
+      if (!entries.length) return;
 
-      brandsTrack.innerHTML = "";
-      if (!entries.length){
-        brandsTrack.innerHTML = "";
-        applyFooterMarquee();
-        return;
-      }
-
-      entries.forEach(([name, info]) => {
-        const pill = document.createElement("div");
-        pill.className = "brandPill";
-        pill.style.setProperty("--c", info.color || "#0f3d63");
+      const set = document.createElement('div');
+      set.className = 'brandSet';
+      entries.forEach(([name, colors]) => {
+        const pill = document.createElement('div');
+        pill.className = 'brandPill';
         pill.title = name;
-        pill.innerHTML = `<span class="brandDot"></span><span class="brandTxt">${escapeHtml(name)}</span>`;
-        brandsTrack.appendChild(pill);
+        const dots = document.createElement('span');
+        dots.className = 'brandDots';
+        dots.setAttribute('aria-hidden', 'true');
+        for (const color of colors){
+          const dot = document.createElement('span');
+          dot.className = 'brandDot';
+          dot.style.setProperty('--c', color);
+          dots.appendChild(dot);
+        }
+        const label = document.createElement('span');
+        label.className = 'brandTxt';
+        label.textContent = name;
+        pill.append(dots, label);
+        set.appendChild(pill);
       });
+      brandsTrack.appendChild(set);
 
-      // aplica marquee caso não caiba
-      requestAnimationFrame(() => requestAnimationFrame(applyFooterMarquee));
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        const needsLoop = set.scrollWidth > brandsViewport.clientWidth + 8;
+        if (needsLoop){
+          const clone = set.cloneNode(true);
+          clone.setAttribute('aria-hidden', 'true');
+          brandsTrack.appendChild(clone);
+        }
+        applyFooterMarquee();
+      }));
     }
 
     let currentCards = [];
@@ -832,7 +899,7 @@
     let progressTimer = null;
     let pageStart = 0;
 
-    const PAGE_DURATION_MS = 12000;
+    const PAGE_DURATION_MS = 20000;
     const PAGE_PROGRESS_TICK_MS = 120;
 
     function clearTimers(){
@@ -850,11 +917,37 @@
       barFillEl.style.width = pct + "%";
     }
 
+    // Exibe apenas modalidades identificadas na resposta do Google Maps.
+    function vehiclePresentation(type){
+      const types = {
+        BUS:["directions_bus","Ônibus"], INTERCITY_BUS:["directions_bus","Ônibus intermunicipal"],
+        TROLLEYBUS:["directions_bus","Trólebus"], SHARE_TAXI:["airport_shuttle","Transporte compartilhado"],
+        SUBWAY:["subway","Metrô"], METRO_RAIL:["tram","Trem leve / VLT"], TRAM:["tram","Bonde / VLT"],
+        LIGHT_RAIL:["tram","VLT"], COMMUTER_TRAIN:["train","Trem metropolitano"],
+        RAIL:["train","Trem"], HEAVY_RAIL:["train","Trem"], HIGH_SPEED_TRAIN:["train","Trem de alta velocidade"],
+        MONORAIL:["train","Monotrilho"], FERRY:["directions_boat","Balsa"],
+        CABLE_CAR:["cable","Transporte por cabo"], FUNICULAR:["tram","Funicular"], GONDOLA_LIFT:["gondola_lift","Teleférico"]
+      };
+      return types[type] || null;
+    }
+
     function buildCardEl(card){
       const el = document.createElement("div");
       el.className = "card";
 
-      const stripeColor = (card.lineColor || "").trim() || "#0f3d63"; // fallback azul PontoView
+      const rawLineColor = (card.lineColor || "").trim();
+      const lineBadgeColor = /^#[0-9a-f]{6}$/i.test(rawLineColor) ? rawLineColor : "#0f3d63";
+      const rgb = lineBadgeColor.slice(1).match(/.{2}/g).map(v => parseInt(v, 16));
+      const luminance = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
+      const lineBadgeText = luminance > 0.68 ? "#0b1626" : "#ffffff";
+
+      const lineText = String(card.line || "—").trim();
+      const vehicle = vehiclePresentation(card.vehicleType);
+      const vehicleHtml = vehicle ? `<span class="material-symbols-outlined vehicleTypeIcon" aria-label="${escapeHtml(vehicle[1])}" title="${escapeHtml(vehicle[1])}">${vehicle[0]}</span>` : "";
+      const lineClass =
+        lineText.length >= 8 ? "is-xlong" :
+        lineText.length >= 6 ? "is-long" : "";
+
       const nextMs = card.times[0];
       const next = fmtHHMM(nextMs);
       const rest = card.times.slice(1);
@@ -863,7 +956,7 @@
       const hasNext = nextTimes.length > 0;
 
       const portrait = window.matchMedia("(orientation: portrait)").matches;
-      const MAX_NEXT = portrait ? 2 : 3;
+      const MAX_NEXT = 3;
       const show = nextTimes.slice(0, MAX_NEXT);
 
       const mins = Math.round((nextMs - Date.now()) / 60000);
@@ -877,7 +970,11 @@
 
       el.innerHTML = `
         <div class="lineCol">
-          <div class="lineNum">${escapeHtml(card.line)}</div>
+          <div
+            class="lineNum ${lineClass}"
+            style="--lineBadgeColor:${lineBadgeColor};--lineBadgeText:${lineBadgeText}"
+            title="${escapeHtml(lineText)}"
+          >${escapeHtml(lineText)}</div>
         </div>
 
         <div class="destCol">
@@ -891,17 +988,12 @@
                 <div class="when">${next}</div>
                 <div class="label">${isSoon ? "SAINDO EM ATÉ 10 MIN" : "PRÓXIMA SAÍDA"}</div>
               </div>
-              <span class="statusDot" aria-hidden="true"></span>
+              ${vehicleHtml}
             </div>
             ${nextSideHtml}
           </div>
         </div>
       `;
-
-      const stripe = document.createElement("div");
-      stripe.className = "stripe";
-      stripe.style.background = stripeColor;
-      el.prepend(stripe);
 
       return el;
     }
@@ -952,7 +1044,11 @@
         const chunk = cards.slice(i, i+perPage);
         const page = document.createElement("div");
         page.className = "page";
-        for (const c of chunk) page.appendChild(buildCardEl(c));
+        for (const [rowIndex, c] of chunk.entries()) {
+          const row = buildCardEl(c);
+          row.style.setProperty('--row-index', rowIndex);
+          page.appendChild(row);
+        }
         stageEl.appendChild(page);
         pages.push(page);
       }
@@ -977,7 +1073,7 @@
       void to.offsetWidth;
       to.classList.add("active");
 
-      setTimeout(() => from.classList.remove("exit"), 560);
+      setTimeout(() => from.classList.remove("exit"), 220);
 
       pageIndex = nextIndex;
       setPagerLabel();
@@ -1121,7 +1217,9 @@
           const depMs = toMillis(td.departure_time) || toMillis(td.departure_time?.value);
           if (!depMs) continue;
 
-          const agencyFromApi =
+          const vehicleType = String(td.line?.vehicle?.type || "").toUpperCase();
+
+      const agencyFromApi =
             td.line?.agencies?.[0]?.name ||
             td.line?.agencies?.[0]?.short_name ||
             "";
@@ -1141,7 +1239,8 @@
             timeMs: depMs,
             agency: agencyLabel,
             lineColor,
-            key: `${String(lineShort)}|${String(headsign)}|${depMs}|${agencyLabel}|${String(lineColor||"")}`
+            vehicleType,
+            key: `${String(lineShort)}|${String(headsign)}|${depMs}|${agencyLabel}|${String(lineColor||"")}|${vehicleType}`
           });
         }
       }
@@ -1161,14 +1260,15 @@
         if (t.timeMs < now - PV_CONFIG.PAST_TOLERANCE_MS) continue;
         if (t.timeMs > end) continue;
 
-        const gKey = `${t.line}||${t.destination}||${t.agency||""}||${t.lineColor||""}`;
+        const gKey = `${t.line}||${t.destination}||${t.agency||""}||${t.lineColor||""}||${t.vehicleType||""}`;
         if (!groups.has(gKey)){
           groups.set(gKey, {
             line: t.line,
             destination: t.destination,
             times: [],
             agency: t.agency || "",
-            lineColor: t.lineColor || ""
+            lineColor: t.lineColor || "",
+            vehicleType: t.vehicleType || ""
           });
         }
         groups.get(gKey).times.push(t.timeMs);
@@ -1185,7 +1285,8 @@
           times: g.times,
           nextTime: g.times[0],
           agency: g.agency,
-          lineColor: g.lineColor
+          lineColor: g.lineColor,
+          vehicleType: g.vehicleType
         });
       }
 
@@ -1280,3 +1381,5 @@
   </script>
 </body>
 </html>
+
+
